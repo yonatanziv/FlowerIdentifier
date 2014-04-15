@@ -50,5 +50,5 @@ int main(int argc, char* argv[]) {
 		printf("Image %s dropped!\n", argv[1]);	
 	waitKey(0);
 	return (int)res;
-}
+} 
 
