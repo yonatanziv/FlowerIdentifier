@@ -72,16 +72,19 @@ class NoInnerMinMaxPointsException: public exception
 
 class PathNotFoundException: public exception
 {
-private:
-	string m_path;
-
-public:
-	PathNotFoundException(string path) : m_path(path) {};
-
 	virtual const char* what() const throw()
 	{
-		string error = "ERROR: svm serialized file is not exists - " + m_path;
-		return error.c_str();
+		return "ERROR: path does not exists!\n";
+
+	}
+};
+
+class EmptyImageException: public exception
+{
+	virtual const char* what() const throw()
+	{
+		return "ERROR: Flower image couldnt be opened\n";
+
 	}
 };
 

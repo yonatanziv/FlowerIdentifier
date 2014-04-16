@@ -1,7 +1,7 @@
 #include "flower_detection_header.h"
 //version 58
 
-void convertRGBtoHSL (Scalar& rgb_color, Scalar& hsl_color){
+void FlowerFeatureExtractor::convertRGBtoHSL (Scalar& rgb_color, Scalar& hsl_color){
 	double r=rgb_color.val[0];
 	double g=rgb_color.val[1];
 	double b=rgb_color.val[2];
@@ -31,7 +31,7 @@ void convertRGBtoHSL (Scalar& rgb_color, Scalar& hsl_color){
 
 }
 
-double hue2rgb(double p, double q, double t){ //helper for convertHSLtoRGB
+double FlowerFeatureExtractor::hue2rgb(double p, double q, double t){ //helper for convertHSLtoRGB
 	double ret;
 	if(t < 0) t += 1;
 	if(t > 1) t -= 1;
@@ -41,7 +41,7 @@ double hue2rgb(double p, double q, double t){ //helper for convertHSLtoRGB
 	return p;
 }
 
-void convertHSLtoRGB(Scalar& hsl_color, Scalar& rgb_color)
+void FlowerFeatureExtractor::convertHSLtoRGB(Scalar& hsl_color, Scalar& rgb_color)
 {
 	double h = hsl_color.val[0];
 	double s = hsl_color.val[1];
@@ -65,7 +65,7 @@ void convertHSLtoRGB(Scalar& hsl_color, Scalar& rgb_color)
 
 }
 
-int square(int x)
+int FlowerFeatureExtractor::square(int x)
 {
 	return x*x;
 }
@@ -74,7 +74,7 @@ int square(int x)
 *	input: two points (x1,y1),(x2,y2)
 *	output: euclidean distance between them
 */
-double distance(int y1, int x1, int y2, int x2)
+double FlowerFeatureExtractor::distance(int y1, int x1, int y2, int x2)
 {
 	double dst = square(x1-x2)+square(y1-y2); 
 	return sqrt(dst);
@@ -84,7 +84,7 @@ double distance(int y1, int x1, int y2, int x2)
 *	input: two CvPoint points
 *	output: euclidean distance between them
 */
-double point_distance(Point& point1, Point& point2)
+double FlowerFeatureExtractor::point_distance(Point& point1, Point& point2)
 {
 	double dst = square(point1.x-point2.x)+square(point1.y-point2.y);
 	return sqrt(dst);
@@ -95,7 +95,7 @@ double point_distance(Point& point1, Point& point2)
 *	output: returns image[row][col] if the indices are inside the array, 0 otherwise
 *	used to prevent falling out of array in localMaxPoints and localMinPoints
 */
-int padded_matrix_access( Mat& image, int row, int col )
+int FlowerFeatureExtractor::padded_matrix_access( Mat& image, int row, int col )
 {
 	if(row < 0 || col < 0 || col > image.cols-1 || row > image.rows-1)
 		return 0;
@@ -109,7 +109,7 @@ int padded_matrix_access( Mat& image, int row, int col )
 *	output: outImage will have 2 at the cells where there are local maximum points of the distance function between the given point and the array point
 *	not allows minimum points closer than <resolution> cells
 */
-void localMinMaxPointsInner(Mat& image, Point& center, Mat& outImage, int resolution, 
+void FlowerFeatureExtractor::localMinMaxPointsInner(Mat& image, Point& center, Mat& outImage, int resolution, 
 							vector<Point>& min_max_points, int min_max_flag)
 {	
 	double dst1, dst2;
@@ -153,7 +153,7 @@ void localMinMaxPointsInner(Mat& image, Point& center, Mat& outImage, int resolu
 *	output: outImage will have 2 at the cells where there are local maximum points of the distance function between the given point and the array point
 *	not allows minimum points closer than <resolution> cells
 */
-void localMaxPoints(Mat& image, Point& center, Mat& outImage, int resolution, vector<Point>& max_points)
+void FlowerFeatureExtractor::localMaxPoints(Mat& image, Point& center, Mat& outImage, int resolution, vector<Point>& max_points)
 {	
 	localMinMaxPointsInner(image, center, outImage, resolution, max_points, MAX_POINTS_FLAG);
 }
@@ -163,7 +163,7 @@ void localMaxPoints(Mat& image, Point& center, Mat& outImage, int resolution, ve
 *	output: outImage will have 2 at the cells where there are local minimum points of the distance function between the given point and the array point
 *	not allows minimum points closer than <resolution> cells
 */
-void localMinPoints(Mat& image, Point& center, Mat& outImage, int resolution, vector<Point>& min_points)
+void FlowerFeatureExtractor::localMinPoints(Mat& image, Point& center, Mat& outImage, int resolution, vector<Point>& min_points)
 {	
 	localMinMaxPointsInner(image, center, outImage, resolution, min_points, MIN_POINTS_FLAG);
 }
@@ -172,7 +172,7 @@ void localMinPoints(Mat& image, Point& center, Mat& outImage, int resolution, ve
 *	input: an image, an array to draw, colors and such
 *	output: draws the extremum points from the array on the image, with specified color, thickness, etc
 */
-void drawPointsOnImage(Mat& draw_img, Mat& contour_matrix_helper, int radius, 
+void FlowerFeatureExtractor::drawPointsOnImage(Mat& draw_img, Mat& contour_matrix_helper, int radius, 
 					   const Scalar& color, int thickness, int line_type, int shift)
 {
 	Point now_point;
@@ -187,21 +187,21 @@ void drawPointsOnImage(Mat& draw_img, Mat& contour_matrix_helper, int radius,
 	}
 }
 
-void myShowImage(const char* name, const Mat& image){
+void FlowerFeatureExtractor::myShowImage(const char* name, const Mat& image){
 	if(DEBUG){
 		imshow(name, image);
 		cvWaitKey(10);
 	}
 }
 
-void showAndWait(const char* name, Mat& image)
+void FlowerFeatureExtractor::showAndWait(const char* name, Mat& image)
 {
 	imshow(name, image);
 	cvWaitKey(0);
 }
 
 
-int colorDst(Scalar& color1, Scalar& color2)
+int FlowerFeatureExtractor::colorDst(Scalar& color1, Scalar& color2)
 {	
 	double dst = square(color1.val[0]-color2.val[0]) + square(color1.val[1]-color2.val[1]) + square(color1.val[2]-color2.val[2]);
 	return sqrt(dst);
@@ -211,7 +211,7 @@ int colorDst(Scalar& color1, Scalar& color2)
 *	input: an image (for mask output), radius, center
 *	output: a binary image containing a filled circle, with specified radius, around center
 */
-void createCircleMask( Mat& img_mask, int radius, Point& center )
+void FlowerFeatureExtractor::createCircleMask( Mat& img_mask, int radius, Point& center )
 {
 	int x,y;
 	for(x=0; x<img_mask.cols; x++){
@@ -230,7 +230,7 @@ void createCircleMask( Mat& img_mask, int radius, Point& center )
 *	input: a binary mask
 *	output: the binary mask, with 1's and 0's switched
 */
-void flipMask(Mat& img_mask )
+void FlowerFeatureExtractor::flipMask(Mat& img_mask )
 {
 	int x,y;
 	for(x=0; x<img_mask.cols; x++){
@@ -245,7 +245,7 @@ void flipMask(Mat& img_mask )
 	}
 }
 
-void bgr2rgb(Scalar& bgr, Scalar& rgb) 
+void FlowerFeatureExtractor::bgr2rgb(Scalar& bgr, Scalar& rgb) 
 {
 	rgb.val[0] = bgr.val[2];
 	rgb.val[1] = bgr.val[1];
@@ -256,7 +256,7 @@ void bgr2rgb(Scalar& bgr, Scalar& rgb)
 *	input: a color image (3 colors * 8 bits depth), a pointer to output image (1 color, 8 bits depth), color threshold, contour pointer
 *	output: img_output is a binary image, with white at all points inside contour (if contour is null, ignores contour) which are "closer" to dom_color than the color threshold
 */
-void toBinaryByDominantColorWithContour(Mat& img_input, Mat& img_output, Scalar& dom_color, int threshold, vector<Point>& contour)
+void FlowerFeatureExtractor::toBinaryByDominantColorWithContour(Mat& img_input, Mat& img_output, Scalar& dom_color, int threshold, vector<Point>& contour)
 {
 	//colors only inside of contour. if contour is NULL, colors everywhere
 	int x,y;
@@ -283,7 +283,7 @@ void toBinaryByDominantColorWithContour(Mat& img_input, Mat& img_output, Scalar&
 	//showAndWait("moo",img_output);
 }
 
-double contourToPointDst(vector<Point>& contour, Point& center)
+double FlowerFeatureExtractor::contourToPointDst(vector<Point>& contour, Point& center)
 {
 	double minDst = -1;
 	double dst =0;
@@ -300,7 +300,7 @@ double contourToPointDst(vector<Point>& contour, Point& center)
 *	input: a pointer to a list of contours (first_contour), a pointer to a pointer of a contour
 *	output: max_contour will contain the contour from the list with the largest amount of points on the contour
 */
-void findMaxContour(vector<vector<Point> >& contours, vector<Point>& max_contour, Mat& img_draw_screen)
+void FlowerFeatureExtractor::findMaxContour(vector<vector<Point> >& contours, vector<Point>& max_contour, Mat& img_draw_screen)
 {
 	int maxsize = 0;
 	int maxIndex = 0;
@@ -321,7 +321,7 @@ void findMaxContour(vector<vector<Point> >& contours, vector<Point>& max_contour
 *	input: a pointer to a list of contours (first_contour), a pointer to a pointer of a contour
 *	output: contour will contain the contour from the list which is closest to the center point.
 */
-void findClosestToCenterPointContour(vector<vector<Point> >& contours, vector<Point>& inner_contour, Point& center, Mat& img_draw_screen)
+void FlowerFeatureExtractor::findClosestToCenterPointContour(vector<vector<Point> >& contours, vector<Point>& inner_contour, Point& center, Mat& img_draw_screen)
 {
 	double minDst = -1;
 	double dst = 0;
@@ -346,7 +346,7 @@ void findClosestToCenterPointContour(vector<vector<Point> >& contours, vector<Po
 *	input: a contour, a two-dim allocated array
 *	output: the contour points in a two-dim int array (which represents a binary image). contour points will have 1 in array
 */
-void contourToMatrix(vector<Point> contour, Mat& arr)
+void FlowerFeatureExtractor::contourToMatrix(vector<Point> contour, Mat& arr)
 {
 	for( int i=0; i<contour.size(); ++i ) {
 		arr.at<uchar>(contour.at(i).y, contour.at(i).x) = 1;
@@ -357,7 +357,7 @@ void contourToMatrix(vector<Point> contour, Mat& arr)
 *	input: an image
 *	output: the image, after applying the meanshift algorithm on it. contains a fix to the size of the image, to allow the meanshift to work
 */
-void applyMeanShift( Mat& img_meanshift )
+void FlowerFeatureExtractor::applyMeanShift( Mat& img_meanshift )
 {
 	//Here comes the thing (fix for meanshift)
 	img_meanshift.cols &= -(1<<MEANSHIFT_LEVEL);
@@ -369,7 +369,7 @@ void applyMeanShift( Mat& img_meanshift )
 *	input: an image and a mask
 *	output: a pointer to an allocated histogram of the image area inside img_mask
 */
-CvHistogram* createAndCalcHistogram(IplImage* img_hist, IplImage* img_mask){
+CvHistogram* FlowerFeatureExtractor::createAndCalcHistogram(IplImage* img_hist, IplImage* img_mask){
 	CvHistogram* hist;
 	int numBins[3] = {NUM_BINS_FOR_COLOR,NUM_BINS_FOR_COLOR,NUM_BINS_FOR_COLOR};
 	float range[] = {0, 256};
@@ -393,7 +393,7 @@ CvHistogram* createAndCalcHistogram(IplImage* img_hist, IplImage* img_mask){
 	return hist;
 }
 
-void resizeImage(Mat& image, Mat& resized_image) {
+void FlowerFeatureExtractor::resizeImage(Mat& image, Mat& resized_image) {
 	double ratio = (image.rows*1.0)/image.cols;
 	int height, width;
 
@@ -413,7 +413,7 @@ void resizeImage(Mat& image, Mat& resized_image) {
 *	input: an array and its size
 *	output: median of the values in the array
 */
-double median(vector<double>& vec)
+double FlowerFeatureExtractor::median(vector<double>& vec)
 {
 	if(vec.empty()) 
 		return 0;
@@ -430,7 +430,7 @@ double median(vector<double>& vec)
 input: an array of points, its size, a center point
 output: median of the distances between a point from the array and the center point
 */
-double radiusOutOfPoints(vector<Point>& max_points, Point& center)
+double FlowerFeatureExtractor::radiusOutOfPoints(vector<Point>& max_points, Point& center)
 {
 	double result;
 	vector<double> distances;
@@ -445,7 +445,7 @@ double radiusOutOfPoints(vector<Point>& max_points, Point& center)
 *	input: minimum points on outer flower contour, radius of outer flower contour
 *	output: returns ratio between closest minimum point to the center and the outer contour ratio
 */
-double getMinMaxFlowerRatio(vector<Point> min_points, double radius_max, Point& center)
+double FlowerFeatureExtractor::getMinMaxFlowerRatio(vector<Point> min_points, double radius_max, Point& center)
 {
 	double min_distance;
 	vector<double> distances;
@@ -467,7 +467,7 @@ double getMinMaxFlowerRatio(vector<Point> min_points, double radius_max, Point& 
 *	input: a contour and flower's center
 *	output: returns variance of distances between a point on the contour and the center point
 */
-double contourVar(vector<Point>& contour, Point& center) {
+double FlowerFeatureExtractor::contourVar(vector<Point>& contour, Point& center) {
 	double Ex = 0; //E[x]
 	double Ex2 = 0;//E[x^2]
 	int i;
@@ -487,7 +487,7 @@ double contourVar(vector<Point>& contour, Point& center) {
 *input: contour and center point.
 *output: The average distance between the center point and the contour. 
 */
-double avgDst(vector<Point>& contour, Point& center){
+double FlowerFeatureExtractor::avgDst(vector<Point>& contour, Point& center){
 	double radius = 0;
 	for(int i=0; i < contour.size(); ++i ){	
 		radius += point_distance(contour.at(i), center);
@@ -506,7 +506,7 @@ radius_max in order to elimnate bad contours - in case of the radius of the circ
 picks the contour with smallest variance of distances between a point on the contour and the center point
 *	fail: max_inner_contour=NULL if no inner contour found.
 */
-void getOptimalInnerContour(vector<Point>& max_flower_contour, vector<Point>& max_inner_contour, Scalar& dom_flower_color,
+void FlowerFeatureExtractor::getOptimalInnerContour(vector<Point>& max_flower_contour, vector<Point>& max_inner_contour, Scalar& dom_flower_color,
 							Scalar& dom_inner_color, int circle_around_center_ponit_flag, Mat& img_meanshift, 
 							Mat& img_draw_screen, Point& center, double radius_max )
 {
@@ -583,7 +583,7 @@ void getOptimalInnerContour(vector<Point>& max_flower_contour, vector<Point>& ma
 	max_inner_contour = optimal_contour;
 }
 
-double innerProduct(Point& v1, Point& v2)
+double FlowerFeatureExtractor::innerProduct(Point& v1, Point& v2)
 {
 	return v1.x*v2.x + v1.y*v2.y;
 }
@@ -592,7 +592,7 @@ double innerProduct(Point& v1, Point& v2)
 *	input: gets three points
 *	output: calculates angle between the three points
 */
-double angle(Point& center, Point& p1, Point& p2)
+double FlowerFeatureExtractor::angle(Point& center, Point& p1, Point& p2)
 {
 	Point v1,v2;
 	v1.x = p1.x-center.x;
@@ -611,7 +611,7 @@ double angle(Point& center, Point& p1, Point& p2)
 - currentPointIndex - the index of the above point. its also need to be ignored.
 output:	- the index of the closest point
 */
-int getClosestPoint(int currentPointIndex,vector<Point>& min_max_points, vector<int>& isVisited)
+int FlowerFeatureExtractor::getClosestPoint(int currentPointIndex,vector<Point>& min_max_points, vector<int>& isVisited)
 {
 	double dst, min = -1;
 	int minIndex;
@@ -637,7 +637,7 @@ int getClosestPoint(int currentPointIndex,vector<Point>& min_max_points, vector<
 *			- center point
 *	output:	The median of all angles between two close points and the center.
 */
-double getMedianAngle(vector<Point>& min_max_points, Point& center, Mat& draw_img, 
+double FlowerFeatureExtractor::getMedianAngle(vector<Point>& min_max_points, Point& center, Mat& draw_img, 
 					  double& outMinAngle, int* outMinAngleTwoPointsIndexes)
 {
 	if(min_max_points.size() < 2)
@@ -700,7 +700,7 @@ double getMedianAngle(vector<Point>& min_max_points, Point& center, Mat& draw_im
 *	input: angle in radians
 *	output: angle in degrees
 */
-double toDegree(double medAngle)
+double FlowerFeatureExtractor::toDegree(double medAngle)
 {
 	return medAngle*180.0/PI;
 }
@@ -709,7 +709,7 @@ double toDegree(double medAngle)
 *	input: median of angles between min or max points
 *	output: threshold, according to medAngle (big, medium, or small threshold)
 */
-int getFixBadMinMaxPointsThreshold(double medAngle)
+int FlowerFeatureExtractor::getFixBadMinMaxPointsThreshold(double medAngle)
 {
 	double angle = toDegree(medAngle);
 	if(angle <= FIX_BAD_MIN_MAX_POINTS_THRESHOLD_SMALL_ANGLES)
@@ -727,7 +727,7 @@ int getFixBadMinMaxPointsThreshold(double medAngle)
 *	output:	The function update pointsArr and return its new length.
 *			- ouMedAngle - will contain the new median angle. 
 */
-int fixBadMinMaxPoints(vector<Point>& min_max_points, Point& center, Mat& draw_img, double& outMedAngle, Mat& img_meanshift)
+int FlowerFeatureExtractor::fixBadMinMaxPoints(vector<Point>& min_max_points, Point& center, Mat& draw_img, double& outMedAngle, Mat& img_meanshift)
 {
 	double medAngle;
 	double minAngle;
@@ -789,7 +789,7 @@ int fixBadMinMaxPoints(vector<Point>& min_max_points, Point& center, Mat& draw_i
 *	input: binary mask (IplImage) pointers, mask_flag (changes inner mask radius, by steps same as COLOR_FLAG_STEP), background_mask_flag (changes background mask radius, by steps same as COLOR_FLAG_STEP)
 *	output: creates the required inner part, flower, and background binary masks according to flags
 */
-void createCircleMasks( Mat& img_mask_small, Mat& img_mask_large, Mat& img_mask_background,Point& center,int mask_flag,int background_mask_flag )
+void FlowerFeatureExtractor::createCircleMasks( Mat& img_mask_small, Mat& img_mask_large, Mat& img_mask_background,Point& center,int mask_flag,int background_mask_flag )
 {
 	int radius_large = center.x > center.y ? center.y : center.x;	
 	int radius_background = radius_large;
@@ -807,7 +807,7 @@ void createCircleMasks( Mat& img_mask_small, Mat& img_mask_large, Mat& img_mask_
 *	input: dominant color struct pointers, mask_flag (changes inner mask radius), background_mask_flag (changes background mask radius)
 *	output: dominant colors, according to the flags given
 */
-void getDominantColors(Scalar& dom_inner_color, Scalar& dom_flower_color, Scalar& dom_background_color, 
+void FlowerFeatureExtractor::getDominantColors(Scalar& dom_inner_color, Scalar& dom_flower_color, Scalar& dom_background_color, 
 					   Mat& img, Point& center,int mask_flag, int background_mask_flag)
 {
 
@@ -863,7 +863,7 @@ void getDominantColors(Scalar& dom_inner_color, Scalar& dom_flower_color, Scalar
 *	input: color_flag (changes threshold which seperates background and flower color )
 *	output: the threshold which seperates background and flower color, according to the flag
 */
-int getThresholdByFlag( int color_flag, Scalar& dom_flower_color, Scalar& dom_background_color )
+int FlowerFeatureExtractor::getThresholdByFlag( int color_flag, Scalar& dom_flower_color, Scalar& dom_background_color )
 {
 	return colorDst(dom_flower_color,dom_background_color)*(OUTER_COLOR_DST_THRESHOLD_START_NUMERATOR + color_flag)/OUTER_COLOR_DST_THRESHOLD_DENOMINATOR;
 }
@@ -873,7 +873,7 @@ int getThresholdByFlag( int color_flag, Scalar& dom_flower_color, Scalar& dom_ba
 *	output: "masks" the image with background mask, and checks if there are more black pixels than white pixels in the image
 *	fail: CONTOUR_FAIL_BINARY_BACKGROUND if there are more white pixels than black pixels in that area (what would indicate a bad binarization - too much background)
 */
-void checkBinaryBackground( Mat& img_binary, int background_mask_flag, Point& center )
+void FlowerFeatureExtractor::checkBinaryBackground( Mat& img_binary, int background_mask_flag, Point& center )
 {
 	Mat img_mask_background = Mat(img_binary.size(), CV_8UC1);
 	Mat img_binary_after_mask = Mat(img_binary.size(), CV_8UC1);
@@ -913,7 +913,7 @@ void checkBinaryBackground( Mat& img_binary, int background_mask_flag, Point& ce
 *	fail: CONTOUR_FAIL_BINARY_BACKGROUND if there are more white pixels than black in the area masked by background mask (fail of checkBinaryBackground)
 : CONTOUR_FAIL_CENTER_POINT if center point is not inside the contour
 */
-int getOptimalFlowerContour(vector<Point>& max_flower_contour, Mat& img, Scalar& dom_flower_color, Scalar& dom_background_color, 
+int FlowerFeatureExtractor::getOptimalFlowerContour(vector<Point>& max_flower_contour, Mat& img, Scalar& dom_flower_color, Scalar& dom_background_color, 
 							Point& center, int color_flag, int background_mask_flag )
 {
 	vector<vector<Point> > contours;
@@ -958,7 +958,7 @@ int getOptimalFlowerContour(vector<Point>& max_flower_contour, Mat& img, Scalar&
 *	input: outer contour of flower, and parameters to update
 *	update: updates sample parameters related to outer part of flower: num of max and min points, median of angles between min points and max points, ratio between closest min point to the center and the flower radius
 */
-void getOuterFlowerProperties(int& num_points_max, int& num_points_min, double& angle_max, double& angle_min, 
+void FlowerFeatureExtractor::getOuterFlowerProperties(int& num_points_max, int& num_points_min, double& angle_max, double& angle_min, 
 							  double& min_max_flower_ratio, double& radius_max, Point& center, 
 							  vector<Point> max_flower_contour, Mat& img_meanshift, Mat& img_draw_screen)
 {
@@ -1011,7 +1011,7 @@ void getOuterFlowerProperties(int& num_points_max, int& num_points_min, double& 
 *	input: outer contour of the flower(in order to create a mask, to define where we look for the inner contour), radius_inner to update, colors and so on (radius_max in order to elimnate bad contours)
 *	output: updates sample properties related to the inner part of the flower. for now: radius_inner
 */
-void getInnerPartProperties(double& radius_inner, double& inner_length, vector<Point>& max_flower_contour, 
+void FlowerFeatureExtractor::getInnerPartProperties(double& radius_inner, double& inner_length, vector<Point>& max_flower_contour, 
 							Scalar& dom_flower_color, Scalar& dom_inner_color, Point& center, Mat& img, 
 							Mat& img_draw_screen, double radius_max)
 {
@@ -1074,7 +1074,7 @@ void getInnerPartProperties(double& radius_inner, double& inner_length, vector<P
 *	output: updates outer flower contour and dominant colors of the flower, inner, and background.
 *	may try several background and inner mask radiuses, and several color thresholds, if it gets bad contours (no points, or center point not inside contour)
 */
-void getFlowerContourAndColor(vector<Point>& max_flower_contour, Mat& img, Scalar& dom_inner_color, Scalar& dom_flower_color, 
+void FlowerFeatureExtractor::getFlowerContourAndColor(vector<Point>& max_flower_contour, Mat& img, Scalar& dom_inner_color, Scalar& dom_flower_color, 
 							  Scalar& dom_background_color, Point& center)
 {
 	int mask_flag, color_flag, contour_fail, background_mask_flag;
@@ -1163,7 +1163,7 @@ void getFlowerContourAndColor(vector<Point>& max_flower_contour, Mat& img, Scala
 *	input: an Image matrix
 *	output: sets lightness in all pixels to be 50 
 */
-void equalizeLightness(Mat& img )
+void FlowerFeatureExtractor::equalizeLightness(Mat& img)
 {
 	Scalar rgb_pixel, hsl_pixel;
 	Mat bgr[3];
@@ -1187,7 +1187,7 @@ void equalizeLightness(Mat& img )
 	merge(bgr, 3, img);
 }
 
-bool isGrayscale(Scalar& color)
+bool FlowerFeatureExtractor::isGrayscale(Scalar& color)
 {
 	Scalar hsl_color;
 	convertRGBtoHSL(color, hsl_color);
@@ -1196,28 +1196,22 @@ bool isGrayscale(Scalar& color)
 	return false;
 }
 
-/*	getSampleDataFromImage
-*	input: image path, samples struct, center point
-*	output: updates samples struct with sample parameters of image in image_path. uses center point for calculations
-*	return: -1 on fail (image dropped because of problems with sample struct, 0 on success
-*/
-int getSampleDataFromImage(char* image_path, DataSample& sample,Point& center)
-{
-	printf("%s ", image_path);
+void FlowerFeatureExtractor::extractFeaturesFromImage(string image_path, Point& center) {
 	Scalar dom_inner_color, dom_flower_color, dom_background_color;	
 
 	Mat img_opened;
 	Mat img_resized;
-	if(!exists(image_path)){
-		printf("ERROR: Image %s does not exists in working directory\n",image_path);
-		return -1;
+
+	if(!PathFileExists(image_path.c_str())){
+		throw PathNotFoundException();
 	}
 
 	img_opened = imread( image_path, CV_LOAD_IMAGE_COLOR );
+
 	if(img_opened.empty()){
-		printf("ERROR: Image %s couldnt be opened\n",image_path);
-		return -1;
+		throw EmptyImageException();
 	}
+
 	resizeImage(img_opened,img_resized);
 
 
@@ -1234,7 +1228,7 @@ int getSampleDataFromImage(char* image_path, DataSample& sample,Point& center)
 	//equalizeLightness(img_meanshift);
 	//mycvShowImage("screen1.3 lightness", img_meanshift);
 
-	
+
 	img_resized.convertTo(img_meanshift, -1, CONTRAST_RATIO);
 
 	//cvSmooth(img_meanshift, img_meanshift,CV_MEDIAN,7,3);
@@ -1251,129 +1245,68 @@ int getSampleDataFromImage(char* image_path, DataSample& sample,Point& center)
 	vector<Point> max_flower_contour;
 	vector<vector<Point> > max_flower_contour_vec;
 
-	try 
-	{
-		getFlowerContourAndColor(max_flower_contour, img_meanshift, dom_inner_color, dom_flower_color, 
-								 dom_background_color, center);
+	getFlowerContourAndColor(max_flower_contour, img_meanshift, dom_inner_color, dom_flower_color, 
+		dom_background_color, center);
 
-		Scalar temp_hsl;
-		convertRGBtoHSL(dom_flower_color, temp_hsl);
-		//printf("DOM FL COL: R: %.2lf G: %.2lf B: %.2lf, H: %.2lf S: %.2lf L: %.2lf\n",dom_flower_color.val[0],dom_flower_color.val[1],dom_flower_color.val[2],temp_hsl.val[0],temp_hsl.val[1],temp_hsl.val[2]);
+	Scalar temp_hsl;
+	convertRGBtoHSL(dom_flower_color, temp_hsl);
+	//printf("DOM FL COL: R: %.2lf G: %.2lf B: %.2lf, H: %.2lf S: %.2lf L: %.2lf\n",dom_flower_color.val[0],dom_flower_color.val[1],dom_flower_color.val[2],temp_hsl.val[0],temp_hsl.val[1],temp_hsl.val[2]);
 
-		//printf("Contour Length: %lf, Area: %lf, Ratio: %lf\n", cvArcLength(max_flower_contour,CV_WHOLE_SEQ,CV_SEQ_FLAG_CLOSED), cvContourArea(max_flower_contour),(cvArcLength(max_flower_contour,CV_WHOLE_SEQ,CV_SEQ_FLAG_CLOSED)*cvArcLength(max_flower_contour,CV_WHOLE_SEQ,CV_SEQ_FLAG_CLOSED))/ (cvContourArea(max_flower_contour)));
+	//printf("Contour Length: %lf, Area: %lf, Ratio: %lf\n", cvArcLength(max_flower_contour,CV_WHOLE_SEQ,CV_SEQ_FLAG_CLOSED), cvContourArea(max_flower_contour),(cvArcLength(max_flower_contour,CV_WHOLE_SEQ,CV_SEQ_FLAG_CLOSED)*cvArcLength(max_flower_contour,CV_WHOLE_SEQ,CV_SEQ_FLAG_CLOSED))/ (cvContourArea(max_flower_contour)));
 
-		/* UPDATE SAMPLE STRUCT */
-		sample.m_dom_flower_color_red=dom_flower_color.val[0];
-		sample.m_dom_flower_color_green=dom_flower_color.val[1];
-		sample.m_dom_flower_color_blue=dom_flower_color.val[2];
-		sample.m_dom_inner_color_red=dom_inner_color.val[0];
-		sample.m_dom_inner_color_green=dom_inner_color.val[1];
-		sample.m_dom_inner_color_blue=dom_inner_color.val[2];
+	/* UPDATE SAMPLE STRUCT */
+	m_sample.m_dom_flower_color_red=dom_flower_color.val[0];
+	m_sample.m_dom_flower_color_green=dom_flower_color.val[1];
+	m_sample.m_dom_flower_color_blue=dom_flower_color.val[2];
+	m_sample.m_dom_inner_color_red=dom_inner_color.val[0];
+	m_sample.m_dom_inner_color_green=dom_inner_color.val[1];
+	m_sample.m_dom_inner_color_blue=dom_inner_color.val[2];
 
-		double flower_length = arcLength(max_flower_contour, true);
-		double flower_area = contourArea(max_flower_contour);
-		sample.m_length_area_ratio = flower_area*(4*PI)/(flower_length*flower_length);
-		/* END UPDATE SAMPLE STRUCT */
+	double flower_length = arcLength(max_flower_contour, true);
+	double flower_area = contourArea(max_flower_contour);
+	m_sample.m_length_area_ratio = flower_area*(4*PI)/(flower_length*flower_length);
+	/* END UPDATE SAMPLE STRUCT */
 
-		img_meanshift.copyTo(img_draw_screen);
-		max_flower_contour_vec.push_back(max_flower_contour);
-		drawContours(img_draw_screen, max_flower_contour_vec, 0, CV_RGB(0x00,0xff,0x00), 2, 8, noArray(), 0); // Try different values of max_level, and see what happens
-		
-		int num_points_max;
-		int num_points_min;
-		double radius_max;			//The radius of the flower.
-		double min_max_flower_ratio;	//The ratio between the length of the closest min points(to center) to the the radius of the flower.
-		double angle_max;			//The median angle between two min points.
-		double angle_min;			//The median angle between two max points.
+	img_meanshift.copyTo(img_draw_screen);
+	max_flower_contour_vec.push_back(max_flower_contour);
+	drawContours(img_draw_screen, max_flower_contour_vec, 0, CV_RGB(0x00,0xff,0x00), 2, 8, noArray(), 0); // Try different values of max_level, and see what happens
+
+	int num_points_max;
+	int num_points_min;
+	double radius_max;			//The radius of the flower.
+	double min_max_flower_ratio;	//The ratio between the length of the closest min points(to center) to the the radius of the flower.
+	double angle_max;			//The median angle between two min points.
+	double angle_min;			//The median angle between two max points.
 
 
-		getOuterFlowerProperties(num_points_max, num_points_min, angle_max, angle_min, 
-								 min_max_flower_ratio, radius_max, center, 
-								 max_flower_contour, img_meanshift, img_draw_screen);
+	getOuterFlowerProperties(num_points_max, num_points_min, angle_max, angle_min, 
+		min_max_flower_ratio, radius_max, center, 
+		max_flower_contour, img_meanshift, img_draw_screen);
 
-		//printf("angle of min: %f\n", angle_min);
+	//printf("angle of min: %f\n", angle_min);
 
-		/* UPDATE SAMPLE STRUCT */
-		sample.m_num_points_max = num_points_max;
-		sample.m_angle_max=angle_max;
-		sample.m_min_max_flower_ratio=min_max_flower_ratio;
-		sample.m_num_points_min = num_points_min;
-		sample.m_angle_min = angle_min;
-		/* END UPDATE SAMPLE STRUCT */
+	/* UPDATE SAMPLE STRUCT */
+	m_sample.m_num_points_max = num_points_max;
+	m_sample.m_angle_max=angle_max;
+	m_sample.m_min_max_flower_ratio=min_max_flower_ratio;
+	m_sample.m_num_points_min = num_points_min;
+	m_sample.m_angle_min = angle_min;
+	/* END UPDATE SAMPLE STRUCT */
 
-		/* END OUTER PART */
+	/* END OUTER PART */
 
-		/* INNER PART */
+	/* INNER PART */
 
-		double radius_inner;
-		double inner_length;			//The length of the inner contour.
+	double radius_inner;
+	double inner_length;			//The length of the inner contour.
 
-		getInnerPartProperties(radius_inner, inner_length, max_flower_contour, dom_flower_color, dom_inner_color,
-			center, img_meanshift, img_draw_screen, radius_max);
+	getInnerPartProperties(radius_inner, inner_length, max_flower_contour, dom_flower_color, dom_inner_color,
+		center, img_meanshift, img_draw_screen, radius_max);
 
-		/* UPDATE SAMPLE STRUCT */
-		sample.m_min_max_radius_ratio = radius_inner / radius_max;
-		sample.m_length_inner_length_flower_ratio = inner_length / flower_length;
-		/* END UPDATE SAMPLE STRUCT */
+	/* UPDATE SAMPLE STRUCT */
+	m_sample.m_min_max_radius_ratio = radius_inner / radius_max;
+	m_sample.m_length_inner_length_flower_ratio = inner_length / flower_length;
+	/* END UPDATE SAMPLE STRUCT */
 
-		/* END INNER PART */
-
-		return 0;
-
-	} catch(exception& e) {
-		cout << e.what();
-	}
-
-	return -1;
-
-}
-
-int exists(const char *fname){
-	return _access(fname, 0) != -1 ? 1 : 0;
-}
-
-DIR* MyChdir(char * path){
-	if(!exists(path)){
-		printf("ERROR: directory - %s does not exists\n",path);
-		return NULL;
-	}
-	DIR* dir = opendir(path);
-	if(_chdir(path)!=0){
-		printf("ERROR: couldnt change working directory - %s\n",path);
-		return NULL;
-	}
-	return dir;
-}
-
-void toLowercase(char* str){
-	for(int i=0; i<strlen(str); i++){
-		str[i]=tolower(str[i]);
-	}
-}
-
-/*	getCenter
-*	input: A center point pointer(to be update), a center points file, a number of a flower picture
-*	output: Updates center to contain the center of the flower, as written in the file. return 0 on success and -1 on fail.
-*	file format: each line contains:
-*				flowerPicNo,x,y
-*/
-int getCenter(CvPoint* center, FILE* centers,int flowerPicNo){
-	int lineCounter=0;
-	char line[20];
-	int i,x,y,id;
-	int flag = 1;
-
-	rewind(centers);
-
-	while(flag && fgets(line,20,centers)!=NULL){
-		sscanf(line,"%d",&id);
-		if(id==flowerPicNo)
-			flag=0;
-	}
-	if(flag==1)
-		return -1;
-	sscanf(line,"%d,%d,%d",&id,&x,&y);
-	center->x=x;
-	center->y=y;
-	return 0;	
+	/* END INNER PART */
 }

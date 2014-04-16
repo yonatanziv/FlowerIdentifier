@@ -68,344 +68,332 @@
 #define MIN_POINTS_FLAG 1
 #define DEBUG 1
 
+class FlowerFeatureExtractor
+{
+public:
+	DataSample m_sample; //Will hold the features.
 
+	/*	getSampleDataFromImage
+	*	input: image path, samples struct, center point
+	*	output: updates samples struct with sample parameters of image in image_path. uses center point for calculations
+	*	return: -1 on fail (image dropped because of problems with sample struct, 0 on success
+	*/
+	void extractFeaturesFromImage(string image_path, Point& center);
 
-/*return x^2*/
-int square(int x);
+private:
 
+	bool isGrayscale(Scalar& color);
 
-/*	distance
-*	input: two points (x1,y1),(x2,y2)
-*	output: euclidean distance between them
-*/
-double distance(int y1, int x1, int y2, int x2);
+	/*	equalizeLightness
+	*	input: an IplImage pointer
+	*	output: sets lightness in all pixels to be 50 (shadow remover).
+	*/
+	void equalizeLightness(Mat& img);
 
+	/*return x^2*/
+	int square(int x);
 
-/*	distance
-*	input: two CvPoint points
-*	output: euclidean distance between them
-*/
-double point_distance(Point& point1, Point& point2);
 
+	/*	distance
+	*	input: two points (x1,y1),(x2,y2)
+	*	output: euclidean distance between them
+	*/
+	double distance(int y1, int x1, int y2, int x2);
 
-/*	padded_array_access
-*	input: an int array, its size, and a cell in it (row and col)
-*	output: returns image[row][col] if the indices are inside the array, 0 otherwise
-*	used to prevent falling out of array in localMaxPoints and localMinPoints
-*/
-int padded_matrix_access(Mat& image, int x, int y);
 
+	/*	distance
+	*	input: two CvPoint points
+	*	output: euclidean distance between them
+	*/
+	double point_distance(Point& point1, Point& point2);
 
-void localMinMaxPointsInner(Mat& image, Point& center, Mat& outImage, int resolution, 
-							vector<Point>& min_max_points, int min_max_flag);
 
-/*	localMaxPoints
-*	input: an int array representing a binary image, its size, a point, an output array, resolution
-*	output: outImage will have 2 at the cells where there are local maximum points of the distance function between the given point and the array point
-*	not allows minimum points closer than <resolution> cells
-*/
-void localMaxPoints(Mat& image, Point& center, Mat& outImage, int resolution, vector<Point>& max_points);
+	/*	padded_array_access
+	*	input: an int array, its size, and a cell in it (row and col)
+	*	output: returns image[row][col] if the indices are inside the array, 0 otherwise
+	*	used to prevent falling out of array in localMaxPoints and localMinPoints
+	*/
+	int padded_matrix_access(Mat& image, int x, int y);
 
-/*	localMinPoints
-*	input: an int array representing a binary image, its size, a point, an output array, resolution
-*	output: outImage will have 2 at the cells where there are local minimum points of the distance function between the given point and the array point
-*	not allows minimum points closer than <resolution> cells
-*/
-void localMinPoints(Mat& image, Point& center, Mat& outImage, int resolution, vector<Point>& min_points);
 
+	void localMinMaxPointsInner(Mat& image, Point& center, Mat& outImage, int resolution, 
+		vector<Point>& min_max_points, int min_max_flag);
 
-/*	drawArrPointsOnImage
-*	input: an image, an array to draw, colors and such
-*	output: draws the extremum points from the array on the image, with specified color, thickness, etc
-*/
-void drawPointsOnImage(Mat& draw_img, Mat& contour_matrix_helper, int radius, const Scalar& color, int thickness, int line_type, int shift);
+	/*	localMaxPoints
+	*	input: an int array representing a binary image, its size, a point, an output array, resolution
+	*	output: outImage will have 2 at the cells where there are local maximum points of the distance function between the given point and the array point
+	*	not allows minimum points closer than <resolution> cells
+	*/
+	void localMaxPoints(Mat& image, Point& center, Mat& outImage, int resolution, vector<Point>& max_points);
 
+	/*	localMinPoints
+	*	input: an int array representing a binary image, its size, a point, an output array, resolution
+	*	output: outImage will have 2 at the cells where there are local minimum points of the distance function between the given point and the array point
+	*	not allows minimum points closer than <resolution> cells
+	*/
+	void localMinPoints(Mat& image, Point& center, Mat& outImage, int resolution, vector<Point>& min_points);
 
-/*show image if DEBUG MODE is on*/
-void myShowImage(const char* name, const Mat& image);
 
+	/*	drawArrPointsOnImage
+	*	input: an image, an array to draw, colors and such
+	*	output: draws the extremum points from the array on the image, with specified color, thickness, etc
+	*/
+	void drawPointsOnImage(Mat& draw_img, Mat& contour_matrix_helper, int radius, const Scalar& color, int thickness, int line_type, int shift);
 
-void showAndWait(const char* name, Mat& image);
 
+	/*show image if DEBUG MODE is on*/
+	void myShowImage(const char* name, const Mat& image);
 
-/*	colorDst
-*	input: two colors
-*	output: returns euclidean distance between the points (as three-dimensional points (R,G,B))
-*/
-int colorDst(Scalar& color1, Scalar& color2);
 
+	void showAndWait(const char* name, Mat& image);
 
-/* createCircleMask
-*	input: an image (for mask output), radius, center
-*	output: a binary image containing a filled circle, with specified radius, around center
-*/
-void createCircleMask(Mat& img_mask, int radius, Point& center);
 
+	/*	colorDst
+	*	input: two colors
+	*	output: returns euclidean distance between the points (as three-dimensional points (R,G,B))
+	*/
+	int colorDst(Scalar& color1, Scalar& color2);
 
-/* flipMask
-*	input: a binary mask
-*	output: the binary mask, with 1's and 0's switched
-*/
-void flipMask(Mat& img_mask);
 
+	/* createCircleMask
+	*	input: an image (for mask output), radius, center
+	*	output: a binary image containing a filled circle, with specified radius, around center
+	*/
+	void createCircleMask(Mat& img_mask, int radius, Point& center);
 
-/* toBinaryByDominantColorWithContour
-*	input: a color image (3 colors * 8 bits depth), a pointer to output image (1 color, 8 bits depth), color threshold, contour pointer
-*	output: img_output is a binary image, with white at all points inside contour (if contour is null, ignores contour) which are "closer" to dom_color than the color threshold
-*/
-void toBinaryByDominantColorWithContour(Mat& img_input, Mat& img_output, Scalar& dom_color, int threshold, vector<Point>& contour);
 
+	/* flipMask
+	*	input: a binary mask
+	*	output: the binary mask, with 1's and 0's switched
+	*/
+	void flipMask(Mat& img_mask);
 
-double contourToPointDst(vector<Point>& contour, Point& center);
 
+	/* toBinaryByDominantColorWithContour
+	*	input: a color image (3 colors * 8 bits depth), a pointer to output image (1 color, 8 bits depth), color threshold, contour pointer
+	*	output: img_output is a binary image, with white at all points inside contour (if contour is null, ignores contour) which are "closer" to dom_color than the color threshold
+	*/
+	void toBinaryByDominantColorWithContour(Mat& img_input, Mat& img_output, Scalar& dom_color, int threshold, vector<Point>& contour);
 
-/* findMaxContour
-*	input: a pointer to a list of contours (first_contour), a pointer to a pointer of a contour
-*	output: max_contour will contain the contour from the list with the largest amount of points on the contour
-*/
-void findMaxContour(vector<vector<Point> >& contours, vector<Point>& max_contour, Mat& img_draw_screen);
 
+	double contourToPointDst(vector<Point>& contour, Point& center);
 
-/* findClosestToContour
-*	input: a pointer to a list of contours (first_contour), a pointer to a pointer of a contour
-*	output: contour will contain the contour from the list which is closest to the center point.
-*/
-void findClosestToCenterPointContour(vector<vector<Point> >& contours, vector<Point>& inner_contour, Point& center, Mat& img_draw_screen);
 
-/* contourToArray
-*	input: a contour, a two-dim allocated array
-*	output: the contour points in a two-dim int array (which represents a binary image). contour points will have 1 in array
-*/
-void contourToMatrix(vector<Point> contour, Mat& arr);
+	/* findMaxContour
+	*	input: a pointer to a list of contours (first_contour), a pointer to a pointer of a contour
+	*	output: max_contour will contain the contour from the list with the largest amount of points on the contour
+	*/
+	void findMaxContour(vector<vector<Point> >& contours, vector<Point>& max_contour, Mat& img_draw_screen);
 
 
-/* applyMeanShift
-*	input: an image
-*	output: the image, after applying the meanshift algorithm on it. contains a fix to the size of the image, to allow the meanshift to work
-*/
-void applyMeanShift(Mat& img_meanshift);
+	/* findClosestToContour
+	*	input: a pointer to a list of contours (first_contour), a pointer to a pointer of a contour
+	*	output: contour will contain the contour from the list which is closest to the center point.
+	*/
+	void findClosestToCenterPointContour(vector<vector<Point> >& contours, vector<Point>& inner_contour, Point& center, Mat& img_draw_screen);
 
+	/* contourToArray
+	*	input: a contour, a two-dim allocated array
+	*	output: the contour points in a two-dim int array (which represents a binary image). contour points will have 1 in array
+	*/
+	void contourToMatrix(vector<Point> contour, Mat& arr);
 
-/* createAndCalcHistogram
-*	input: an image and a mask
-*	output: a pointer to an allocated histogram of the image area inside img_mask
-*/
-CvHistogram* createAndCalcHistogram(IplImage* img_hist, IplImage* img_mask);
 
-void resizeImage(Mat& image, Mat& out);
+	/* applyMeanShift
+	*	input: an image
+	*	output: the image, after applying the meanshift algorithm on it. contains a fix to the size of the image, to allow the meanshift to work
+	*/
+	void applyMeanShift(Mat& img_meanshift);
 
 
-/*	median
-*	input: an array and its size
-*	output: median of the values in the array
-*/
-double median(vector<double>& vec);
+	/* createAndCalcHistogram
+	*	input: an image and a mask
+	*	output: a pointer to an allocated histogram of the image area inside img_mask
+	*/
+	CvHistogram* createAndCalcHistogram(IplImage* img_hist, IplImage* img_mask);
 
-/* createDistanceArray
-*	input: an array of points, its size, a center point, a pointer to an allocated distances array
-*	output: updates distances array to contain all distances between a point from the points array and the center point
-*/
-void createDistanceArray(double* distances,CvPoint* points,int num_points,CvPoint* center);
+	void resizeImage(Mat& image, Mat& out);
 
 
-/* radiusOutOfPoints
-input: an array of points, its size, a center point
-output: median of the distances between a point from the array and the center point
-*/
-double radiusOutOfPoints(vector<Point>& max_points, Point& center);
+	/*	median
+	*	input: an array and its size
+	*	output: median of the values in the array
+	*/
+	double median(vector<double>& vec);
 
+	/* createDistanceArray
+	*	input: an array of points, its size, a center point, a pointer to an allocated distances array
+	*	output: updates distances array to contain all distances between a point from the points array and the center point
+	*/
+	void createDistanceArray(double* distances,CvPoint* points,int num_points,CvPoint* center);
 
-/*	getMinMaxFlowerRatio
-*	input: minimum points on outer flower contour, radius of outer flower contour
-*	output: returns ratio between closest minimum point to the center and the outer contour ratio
-*/
-double getMinMaxFlowerRatio(vector<Point> min_points, double radius_max, Point& center);
 
-/* contourVar
-*	input: a contour and flower's center
-*	output: returns variance of distances between a point on the contour and the center point
-*/
-double contourVar(vector<Point>& contour, Point& center);
+	/* radiusOutOfPoints
+	input: an array of points, its size, a center point
+	output: median of the distances between a point from the array and the center point
+	*/
+	double radiusOutOfPoints(vector<Point>& max_points, Point& center);
 
 
-/*avgDst
-*input: contour and center point.
-*output: The average distance between the center point and the contour. 
-*/
-double avgDst(CvSeq* contour,CvPoint* center);
+	/*	getMinMaxFlowerRatio
+	*	input: minimum points on outer flower contour, radius of outer flower contour
+	*	output: returns ratio between closest minimum point to the center and the outer contour ratio
+	*/
+	double getMinMaxFlowerRatio(vector<Point> min_points, double radius_max, Point& center);
 
+	/* contourVar
+	*	input: a contour and flower's center
+	*	output: returns variance of distances between a point on the contour and the center point
+	*/
+	double contourVar(vector<Point>& contour, Point& center);
 
 
-/*	getOptimalInnerContour
-*	input: max_flower_conotur (contour of outer flower), pointer to max_inner_contour pointer (to update pointer), dominant colors, 
-circle_around_center_ponit_flag - this flag will be activated (by the calling function) if no inner contour found the first time this function is run. if this flag is on, the inner contour will be a circle around the center point with radius of the average distance between the center point and the contour with the smallest variance.
-radius_max in order to elimnate bad contours - in case of the radius of the circle around center point is too big (more than half of the radius_max).
-*	output: runs on color thresholds (according to OPTIMAL_INNER_CONTOUR_START, OPTIMAL_INNER_CONTOUR_END, OPTIMAL_INNER_CONTOUR_QUOTIENT,
-*			paints the are which is within <threshold> distance from the center color, and within the outer flower contour, and tries to find contour there.
-picks the contour with smallest variance of distances between a point on the contour and the center point
-*	fail: max_inner_contour=NULL if no inner contour found.
-*/
-void getOptimalInnerContour(vector<Point>& max_flower_contour, vector<Point>& max_inner_contour, Scalar& dom_flower_color, Scalar& dom_inner_color, int circle_around_center_ponit_flag, Mat& img_meanshift, Mat& img_draw_screen, Point& center, double radius_max);
+	/*avgDst
+	*input: contour and center point.
+	*output: The average distance between the center point and the contour. 
+	*/
+	double avgDst(vector<Point>& contour, Point& center);
 
 
-double innerProduct(Point& v1, Point& v2);
 
+	/*	getOptimalInnerContour
+	*	input: max_flower_conotur (contour of outer flower), pointer to max_inner_contour pointer (to update pointer), dominant colors, 
+	circle_around_center_ponit_flag - this flag will be activated (by the calling function) if no inner contour found the first time this function is run. if this flag is on, the inner contour will be a circle around the center point with radius of the average distance between the center point and the contour with the smallest variance.
+	radius_max in order to elimnate bad contours - in case of the radius of the circle around center point is too big (more than half of the radius_max).
+	*	output: runs on color thresholds (according to OPTIMAL_INNER_CONTOUR_START, OPTIMAL_INNER_CONTOUR_END, OPTIMAL_INNER_CONTOUR_QUOTIENT,
+	*			paints the are which is within <threshold> distance from the center color, and within the outer flower contour, and tries to find contour there.
+	picks the contour with smallest variance of distances between a point on the contour and the center point
+	*	fail: max_inner_contour=NULL if no inner contour found.
+	*/
+	void getOptimalInnerContour(vector<Point>& max_flower_contour, vector<Point>& max_inner_contour, Scalar& dom_flower_color, Scalar& dom_inner_color, int circle_around_center_ponit_flag, Mat& img_meanshift, Mat& img_draw_screen, Point& center, double radius_max);
 
-/*	angle
-*	input: gets three points
-*	output: calculates angle between the three points
-*/
-double angle(Point& center, Point& p1, Point& p2);
 
+	double innerProduct(Point& v1, Point& v2);
 
-/*
-*	input:	- one point of the array
-- array of points
-- isVisited - the index of points to be ignored. (chosen to be closest to other points already).
-- currentPointIndex - the index of the above point. its also need to be ignored.
-output:	- the index of the closest point
-*/
-int getClosestPoint(int currentPointIndex,vector<Point>& min_max_points, vector<int>& isVisited);
 
+	/*	angle
+	*	input: gets three points
+	*	output: calculates angle between the three points
+	*/
+	double angle(Point& center, Point& p1, Point& p2);
 
-/*
-*	input:	- array of point (min or max points) in size greater than 2.
-*			- center point
-*	output:	The median of all angles between two close points and the center.
-*/
-double getMedianAngle(vector<Point>& min_max_points, Point& center, Mat& draw_img, double& outMinAngle, int* outMinAngleTwoPointsIndexes);
 
+	/*
+	*	input:	- one point of the array
+	- array of points
+	- isVisited - the index of points to be ignored. (chosen to be closest to other points already).
+	- currentPointIndex - the index of the above point. its also need to be ignored.
+	output:	- the index of the closest point
+	*/
+	int getClosestPoint(int currentPointIndex,vector<Point>& min_max_points, vector<int>& isVisited);
 
-/*	toDegree
-*	input: angle in radians
-*	output: angle in degrees
-*/
-double toDegree(double medAngle);
 
+	/*
+	*	input:	- array of point (min or max points) in size greater than 2.
+	*			- center point
+	*	output:	The median of all angles between two close points and the center.
+	*/
+	double getMedianAngle(vector<Point>& min_max_points, Point& center, Mat& draw_img, double& outMinAngle, int* outMinAngleTwoPointsIndexes);
 
-/*	getFixBadMinMaxPointsThreshold
-*	input: median of angles between min or max points
-*	output: threshold, according to medAngle (big, medium, or small threshold)
-*/
-int getFixBadMinMaxPointsThreshold(double medAngle);
 
+	/*	toDegree
+	*	input: angle in radians
+	*	output: angle in degrees
+	*/
+	double toDegree(double medAngle);
 
-/*
-*	This function removes bad max points - if the angle between two max points is smaller 
-*	than the medianAngle/fix_bad_min_max_points_threshold, it is removed.
-*	
-*	output:	The function update pointsArr and return its new length.
-*			- ouMedAngle - will contain the new median angle. 
-*/
-int fixBadMinMaxPoints(vector<Point>& min_max_points, Point& center, Mat& draw_img, double& outMedAngle, Mat& img_meanshift);
 
+	/*	getFixBadMinMaxPointsThreshold
+	*	input: median of angles between min or max points
+	*	output: threshold, according to medAngle (big, medium, or small threshold)
+	*/
+	int getFixBadMinMaxPointsThreshold(double medAngle);
 
-void convertRGBtoHSV(CvScalar* rgb_color, CvScalar* hsv_color);
 
+	/*
+	*	This function removes bad max points - if the angle between two max points is smaller 
+	*	than the medianAngle/fix_bad_min_max_points_threshold, it is removed.
+	*	
+	*	output:	The function update pointsArr and return its new length.
+	*			- ouMedAngle - will contain the new median angle. 
+	*/
+	int fixBadMinMaxPoints(vector<Point>& min_max_points, Point& center, Mat& draw_img, double& outMedAngle, Mat& img_meanshift);
 
-void convertRGBtoHSL (Scalar& rgb_color, Scalar& hsl_color);
 
+	void convertRGBtoHSV(CvScalar* rgb_color, CvScalar* hsv_color);
 
-double hue2rgb(double p, double q, double t); //helper for convertHSLtoRGB
 
+	void convertRGBtoHSL (Scalar& rgb_color, Scalar& hsl_color);
 
-void convertHSLtoRGB(Scalar& hsl_color, Scalar& rgb_color);
 
+	double hue2rgb(double p, double q, double t); //helper for convertHSLtoRGB
 
-/*	createCircleMasks
-*	input: binary mask (IplImage) pointers, mask_flag (changes inner mask radius, by steps same as COLOR_FLAG_STEP), background_mask_flag (changes background mask radius, by steps same as COLOR_FLAG_STEP)
-*	output: creates the required inner part, flower, and background binary masks according to flags
-*/
-void createCircleMasks(Mat& img_mask_small, Mat& img_mask_large, Mat& img_mask_background,Point& center,int mask_flag,int background_mask_flag);
 
+	void convertHSLtoRGB(Scalar& hsl_color, Scalar& rgb_color);
 
-/*	getDominantColors
-*	input: dominant color struct pointers, mask_flag (changes inner mask radius), background_mask_flag (changes background mask radius)
-*	output: dominant colors, according to the flags given
-*/
-void getDominantColors(Scalar& dom_inner_color, Scalar& dom_flower_color, Scalar& dom_background_color, Mat& img, Point& center,int mask_flag, int background_mask_flag);
+	void bgr2rgb(Scalar& bgr, Scalar& rgb);
 
-/*	getThresholdByFlag
-*	input: color_flag (changes threshold which seperates background and flower color )
-*	output: the threshold which seperates background and flower color, according to the flag
-*/
-int getThresholdByFlag(int color_flag,Scalar& dom_flower_color,Scalar& dom_background_color);
 
+	/*	createCircleMasks
+	*	input: binary mask (IplImage) pointers, mask_flag (changes inner mask radius, by steps same as COLOR_FLAG_STEP), background_mask_flag (changes background mask radius, by steps same as COLOR_FLAG_STEP)
+	*	output: creates the required inner part, flower, and background binary masks according to flags
+	*/
+	void createCircleMasks(Mat& img_mask_small, Mat& img_mask_large, Mat& img_mask_background,Point& center,int mask_flag,int background_mask_flag);
 
-/* checkBinaryBackground
-*	input: binary image, background_mask_flag (changes background mask radius)
-*	output: "masks" the image with background mask, and checks if there are more black pixels than white pixels in the image
-*	fail: CONTOUR_FAIL_BINARY_BACKGROUND if there are more white pixels than black pixels in that area (what would indicate a bad binarization - too much background)
-*/
-void checkBinaryBackground(Mat& img_binary, int background_mask_flag, Point& center);
 
+	/*	getDominantColors
+	*	input: dominant color struct pointers, mask_flag (changes inner mask radius), background_mask_flag (changes background mask radius)
+	*	output: dominant colors, according to the flags given
+	*/
+	void getDominantColors(Scalar& dom_inner_color, Scalar& dom_flower_color, Scalar& dom_background_color, Mat& img, Point& center,int mask_flag, int background_mask_flag);
 
-/*	getOptimalFlowerContour
-*	input: pointer to pointer of outer flower contour (in order to update pointer), dominant colors, color flag (changes color threshold), background mask flag (changes background mask radius)
-*	output: gets optimal (largest) contour of outer flower (hopefully), according to the parameters.
-*	fail: CONTOUR_FAIL_BINARY_BACKGROUND if there are more white pixels than black in the area masked by background mask (fail of checkBinaryBackground)
-: CONTOUR_FAIL_CENTER_POINT if center point is not inside the contour
-*/
-int getOptimalFlowerContour(vector<Point>& max_flower_contour, Mat& img, Scalar& dom_flower_color, Scalar& dom_background_color, Point& center, int color_flag, int background_mask_flag);
+	/*	getThresholdByFlag
+	*	input: color_flag (changes threshold which seperates background and flower color )
+	*	output: the threshold which seperates background and flower color, according to the flag
+	*/
+	int getThresholdByFlag(int color_flag,Scalar& dom_flower_color,Scalar& dom_background_color);
 
 
-/*	getOuterFlowerProperties
-*	input: outer contour of flower, and parameters to update
-*	update: updates sample parameters related to outer part of flower: num of max and min points, median of angles between min points and max points, ratio between closest min point to the center and the flower radius
-*/
-void getOuterFlowerProperties(int& num_points_max, int& num_points_min, double& angle_max, double& angle_min, double& min_max_flower_ratio, double& radius_max, Point& center, vector<Point> max_flower_contour, Mat& img_meanshift, Mat& img_draw_screen);
+	/* checkBinaryBackground
+	*	input: binary image, background_mask_flag (changes background mask radius)
+	*	output: "masks" the image with background mask, and checks if there are more black pixels than white pixels in the image
+	*	fail: CONTOUR_FAIL_BINARY_BACKGROUND if there are more white pixels than black pixels in that area (what would indicate a bad binarization - too much background)
+	*/
+	void checkBinaryBackground(Mat& img_binary, int background_mask_flag, Point& center);
 
 
-/*	getInnerPartProperties
-*	input: outer contour of the flower(in order to create a mask, to define where we look for the inner contour), radius_inner to update, colors and so on (radius_max in order to elimnate bad contours)
-*	output: updates sample properties related to the inner part of the flower. for now: radius_inner
-*/
-void getInnerPartProperties(double& radius_inner, double& inner_length, vector<Point>& max_flower_contour, Scalar& dom_flower_color, Scalar& dom_inner_color, Point& center, Mat& img, Mat& img_draw_screen, double radius_max);
+	/*	getOptimalFlowerContour
+	*	input: pointer to pointer of outer flower contour (in order to update pointer), dominant colors, color flag (changes color threshold), background mask flag (changes background mask radius)
+	*	output: gets optimal (largest) contour of outer flower (hopefully), according to the parameters.
+	*	fail: CONTOUR_FAIL_BINARY_BACKGROUND if there are more white pixels than black in the area masked by background mask (fail of checkBinaryBackground)
+	: CONTOUR_FAIL_CENTER_POINT if center point is not inside the contour
+	*/
+	int getOptimalFlowerContour(vector<Point>& max_flower_contour, Mat& img, Scalar& dom_flower_color, Scalar& dom_background_color, Point& center, int color_flag, int background_mask_flag);
 
 
-/*	getFlowerContourAndColor
-*	input: pointer to pointer of max_flower_contour (in order to update it), color struct pointers
-*	output: updates outer flower contour and dominant colors of the flower, inner, and background.
-*	may try several background and inner mask radiuses, and several color thresholds, if it gets bad contours (no points, or center point not inside contour)
-*/
-void getFlowerContourAndColor(vector<Point>& max_flower_contour, Mat& img, Scalar& dom_inner_color, Scalar& dom_flower_color, Scalar& dom_background_color, Point& center);
+	/*	getOuterFlowerProperties
+	*	input: outer contour of flower, and parameters to update
+	*	update: updates sample parameters related to outer part of flower: num of max and min points, median of angles between min points and max points, ratio between closest min point to the center and the flower radius
+	*/
+	void getOuterFlowerProperties(int& num_points_max, int& num_points_min, double& angle_max, double& angle_min, double& min_max_flower_ratio, double& radius_max, Point& center, vector<Point> max_flower_contour, Mat& img_meanshift, Mat& img_draw_screen);
 
 
-/*	equalizeLightness
-*	input: an IplImage pointer
-*	output: sets lightness in all pixels to be 50 (shadow remover).
-*/
-void equalizeLightness(Mat& img);
+	/*	getInnerPartProperties
+	*	input: outer contour of the flower(in order to create a mask, to define where we look for the inner contour), radius_inner to update, colors and so on (radius_max in order to elimnate bad contours)
+	*	output: updates sample properties related to the inner part of the flower. for now: radius_inner
+	*/
+	void getInnerPartProperties(double& radius_inner, double& inner_length, vector<Point>& max_flower_contour, Scalar& dom_flower_color, Scalar& dom_inner_color, Point& center, Mat& img, Mat& img_draw_screen, double radius_max);
 
-void equalizeLightness2(IplImage* img);
 
-bool isGrayscale(Scalar& color);
+	/*	getFlowerContourAndColor
+	*	input: pointer to pointer of max_flower_contour (in order to update it), color struct pointers
+	*	output: updates outer flower contour and dominant colors of the flower, inner, and background.
+	*	may try several background and inner mask radiuses, and several color thresholds, if it gets bad contours (no points, or center point not inside contour)
+	*/
+	void getFlowerContourAndColor(vector<Point>& max_flower_contour, Mat& img, Scalar& dom_inner_color, Scalar& dom_flower_color, Scalar& dom_background_color, Point& center);
 
 
-/*	getSampleDataFromImage
-*	input: image path, samples struct, center point
-*	output: updates samples struct with sample parameters of image in image_path. uses center point for calculations
-*	return: -1 on fail (image dropped because of problems with sample struct, 0 on success
-*/
-int getSampleDataFromImage(char* image_path, DataSample& sample,Point& center);
-
-
-int exists(const char *fname);
-
-
-DIR* MyChdir(char * path);
-
-
-void toLowercase(char* str);
-
-
-/*	getCenter
-*	input: A center point pointer(to be update), a center points file, a number of a flower picture
-*	output: Updates center to contain the center of the flower, as written in the file. return 0 on success and -1 on fail.
-*	file format: each line contains:
-*				flowerPicNo,x,y
-*/
-int getCenter(CvPoint* center, FILE* centers,int flowerPicNo);
+};
 
 
 #endif

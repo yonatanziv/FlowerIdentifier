@@ -42,7 +42,7 @@ void TrainSet::addSample(DataSample& sample)
 void SvmModel::load(string filepath) 
 {
 	if(!PathFileExists(filepath.c_str())){
-		throw PathNotFoundException(filepath);
+		throw PathNotFoundException();
 	}
 
 	m_svm.load(filepath.c_str());

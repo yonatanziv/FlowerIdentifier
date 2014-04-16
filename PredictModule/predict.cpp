@@ -13,31 +13,33 @@
 */
 int main(int argc, char* argv[]) {
 
-	DataSample predict_sample;
+	FlowerFeatureExtractor flower_featurs;
 	SvmModel svm;
 	double res =-1;
-	int ret;
 	Point center;
 
 	if(argc != 4){
 		cout << "Usage: <exe> <flower_image_path> <center_x> <center_y>";
 		return -1;
 	}
-			
-	cout << "\n\n Predict:\n";
 
-	svm.load(SVM_SERIALIZE_PATH);
+	try 
+	{
+		cout << "\n\n Predict:\n";
 
-	center.x=atoi(argv[2]);
-	center.y=atoi(argv[3]);
+		svm.load(SVM_SERIALIZE_PATH);
 
-	ret = getSampleDataFromImage(argv[1], predict_sample, center);
-	if(ret!=-1){
-		res = svm.predict(predict_sample);
+		center.x=atoi(argv[2]);
+		center.y=atoi(argv[3]);
+
+		flower_featurs.extractFeaturesFromImage(argv[1], center);
+		res = svm.predict(flower_featurs.m_sample);
 		printf("** Predicting: %s is %lf **\n\n", argv[1], res);
+
+	}  catch(exception& e) {
+		cout << e.what() << "\n";
 	}
-	else
-		printf("Image %s dropped!\n", argv[1]);	
+
 	waitKey(0);
 	return (int)res;
 } 
