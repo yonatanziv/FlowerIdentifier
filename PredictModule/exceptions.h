@@ -2,6 +2,7 @@
 #define EXCEPTIONS_H
 
 #include <exception>
+#include <string>
 using namespace std;
 
 class ContourFailBinaryBackgroundException: public exception
@@ -69,6 +70,19 @@ class NoInnerMinMaxPointsException: public exception
 	}
 };
 
+class PathNotFoundException: public exception
+{
+private:
+	string m_path;
 
+public:
+	PathNotFoundException(string path) : m_path(path) {};
+
+	virtual const char* what() const throw()
+	{
+		string error = "ERROR: svm serialized file is not exists - " + m_path;
+		return error.c_str();
+	}
+};
 
 #endif

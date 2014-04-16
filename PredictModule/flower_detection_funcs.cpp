@@ -1201,7 +1201,8 @@ bool isGrayscale(Scalar& color)
 *	output: updates samples struct with sample parameters of image in image_path. uses center point for calculations
 *	return: -1 on fail (image dropped because of problems with sample struct, 0 on success
 */
-int getSampleDataFromImage(char* image_path, Svm_Sample* sample,Point& center) {
+int getSampleDataFromImage(char* image_path, DataSample& sample,Point& center)
+{
 	printf("%s ", image_path);
 	Scalar dom_inner_color, dom_flower_color, dom_background_color;	
 
@@ -1262,16 +1263,16 @@ int getSampleDataFromImage(char* image_path, Svm_Sample* sample,Point& center) {
 		//printf("Contour Length: %lf, Area: %lf, Ratio: %lf\n", cvArcLength(max_flower_contour,CV_WHOLE_SEQ,CV_SEQ_FLAG_CLOSED), cvContourArea(max_flower_contour),(cvArcLength(max_flower_contour,CV_WHOLE_SEQ,CV_SEQ_FLAG_CLOSED)*cvArcLength(max_flower_contour,CV_WHOLE_SEQ,CV_SEQ_FLAG_CLOSED))/ (cvContourArea(max_flower_contour)));
 
 		/* UPDATE SAMPLE STRUCT */
-		sample->dom_flower_color_red=dom_flower_color.val[0];
-		sample->dom_flower_color_green=dom_flower_color.val[1];
-		sample->dom_flower_color_blue=dom_flower_color.val[2];
-		sample->dom_inner_color_red=dom_inner_color.val[0];
-		sample->dom_inner_color_green=dom_inner_color.val[1];
-		sample->dom_inner_color_blue=dom_inner_color.val[2];
+		sample.m_dom_flower_color_red=dom_flower_color.val[0];
+		sample.m_dom_flower_color_green=dom_flower_color.val[1];
+		sample.m_dom_flower_color_blue=dom_flower_color.val[2];
+		sample.m_dom_inner_color_red=dom_inner_color.val[0];
+		sample.m_dom_inner_color_green=dom_inner_color.val[1];
+		sample.m_dom_inner_color_blue=dom_inner_color.val[2];
 
 		double flower_length = arcLength(max_flower_contour, true);
 		double flower_area = contourArea(max_flower_contour);
-		sample->length_area_ratio = flower_area*(4*PI)/(flower_length*flower_length);
+		sample.m_length_area_ratio = flower_area*(4*PI)/(flower_length*flower_length);
 		/* END UPDATE SAMPLE STRUCT */
 
 		img_meanshift.copyTo(img_draw_screen);
@@ -1293,11 +1294,11 @@ int getSampleDataFromImage(char* image_path, Svm_Sample* sample,Point& center) {
 		//printf("angle of min: %f\n", angle_min);
 
 		/* UPDATE SAMPLE STRUCT */
-		sample->num_points_max = num_points_max;
-		sample->angle_max=angle_max;
-		sample->min_max_flower_ratio=min_max_flower_ratio;
-		sample->num_points_min = num_points_min;
-		sample->angle_min = angle_min;
+		sample.m_num_points_max = num_points_max;
+		sample.m_angle_max=angle_max;
+		sample.m_min_max_flower_ratio=min_max_flower_ratio;
+		sample.m_num_points_min = num_points_min;
+		sample.m_angle_min = angle_min;
 		/* END UPDATE SAMPLE STRUCT */
 
 		/* END OUTER PART */
@@ -1311,8 +1312,8 @@ int getSampleDataFromImage(char* image_path, Svm_Sample* sample,Point& center) {
 			center, img_meanshift, img_draw_screen, radius_max);
 
 		/* UPDATE SAMPLE STRUCT */
-		sample->min_max_radius_ratio = radius_inner / radius_max;
-		sample->length_inner_length_flower_ratio = inner_length / flower_length;
+		sample.m_min_max_radius_ratio = radius_inner / radius_max;
+		sample.m_length_inner_length_flower_ratio = inner_length / flower_length;
 		/* END UPDATE SAMPLE STRUCT */
 
 		/* END INNER PART */

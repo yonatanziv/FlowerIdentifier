@@ -63,7 +63,7 @@
 #define MINIMUM_INNER_CONTOUR_POINTS 5 //This number is the minimum number of points that inner contour should contain.
 #define INNER_RADIUS_TO_FLOWER_RADIUS_RATIO 0.5 //In order to eliminate bad circles contours around center point.
 #define INNER_CONTUOR_MINIMUM_THRESHOLD 10 //Minimum threshold to find inner contour. 
-#define SVM_SERIALIZE_FILE_NAME "svmSerialize.txt"
+#define SVM_SERIALIZE_PATH "samples\\serialization\\svmSerialize.txt"
 #define MAX_POINTS_FLAG 0
 #define MIN_POINTS_FLAG 1
 #define DEBUG 1
@@ -387,7 +387,7 @@ bool isGrayscale(Scalar& color);
 *	output: updates samples struct with sample parameters of image in image_path. uses center point for calculations
 *	return: -1 on fail (image dropped because of problems with sample struct, 0 on success
 */
-int getSampleDataFromImage(char* image_path, Svm_Sample* sample,Point& center);
+int getSampleDataFromImage(char* image_path, DataSample& sample,Point& center);
 
 
 int exists(const char *fname);
