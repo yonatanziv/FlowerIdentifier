@@ -187,20 +187,6 @@ void FlowerFeatureExtractor::drawPointsOnImage(Mat& draw_img, Mat& contour_matri
 	}
 }
 
-void FlowerFeatureExtractor::myShowImage(const char* name, const Mat& image){
-	if(DEBUG){
-		imshow(name, image);
-		cvWaitKey(10);
-	}
-}
-
-void FlowerFeatureExtractor::showAndWait(const char* name, Mat& image)
-{
-	imshow(name, image);
-	cvWaitKey(0);
-}
-
-
 int FlowerFeatureExtractor::colorDst(Scalar& color1, Scalar& color2)
 {	
 	double dst = square(color1.val[0]-color2.val[0]) + square(color1.val[1]-color2.val[1]) + square(color1.val[2]-color2.val[2]);
@@ -393,22 +379,6 @@ CvHistogram* FlowerFeatureExtractor::createAndCalcHistogram(IplImage* img_hist, 
 	return hist;
 }
 
-void FlowerFeatureExtractor::resizeImage(Mat& image, Mat& resized_image) {
-	double ratio = (image.rows*1.0)/image.cols;
-	int height, width;
-
-	if(ratio < 1){
-		height = BASE_SIZE;
-		width = (int)(height*1.0/ratio);
-	}
-	else{
-		width = BASE_SIZE;
-		height = (int)width*ratio;
-	}
-		
-	resize(image, resized_image, Size(width,height));
-}
-
 /*	median
 *	input: an array and its size
 *	output: median of the values in the array
@@ -529,7 +499,7 @@ void FlowerFeatureExtractor::getOptimalInnerContour(vector<Point>& max_flower_co
 
 		toBinaryByDominantColorWithContour(img_meanshift, img_binary_small, dom_inner_color, threshold_small, max_flower_contour);
 		sprintf(name,"smallbw %d",i);
-		myShowImage(name, img_binary_small);
+		Utils::myShowImage(name, img_binary_small);
 
 		findContours(img_binary_small, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
 		if(circle_around_center_ponit_flag == 0)
@@ -929,7 +899,7 @@ int FlowerFeatureExtractor::getOptimalFlowerContour(vector<Point>& max_flower_co
 		toBinaryByDominantColorWithContour(img, img_binary, dom_flower_color, threshold_large, vector<Point>());
 		checkBinaryBackground(img_binary, background_mask_flag, center);
 
-		myShowImage("screen5", img_binary);
+		Utils::myShowImage("screen5", img_binary);
 
 		findContours(img_binary, contours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
 		if (contours.size() == 0) {
@@ -966,7 +936,6 @@ void FlowerFeatureExtractor::getOuterFlowerProperties(int& num_points_max, int& 
 	vector<Point> min_points;		//Will hold the flower min points.
 	int cols = img_meanshift.cols;
 	int rows = img_meanshift.rows;
-	myShowImage("a1", img_draw_screen);
 	Mat contour_matrix = Mat::zeros(img_meanshift.size(), CV_8UC1);
 	Mat contour_matrix_helper = Mat::zeros(img_meanshift.size(), CV_8UC1);
 
@@ -987,7 +956,7 @@ void FlowerFeatureExtractor::getOuterFlowerProperties(int& num_points_max, int& 
 	contour_matrix.copyTo(contour_matrix_helper);
 	localMinPoints(contour_matrix, center, contour_matrix_helper, MIN_POINTS_THRESHOLD, min_points);
 	drawPointsOnImage(img_draw_screen, contour_matrix_helper, 2, CV_RGB(0x00,0x00,0xff), -1, 8, 0);
-	myShowImage("screen6", img_draw_screen);
+	Utils::myShowImage("screen6", img_draw_screen);
 
 	if(min_points.size() == 0)
 		throw NoOuterMinPointsFoundException(); // NO_OUTER_MIN_POINTS_FOUND_ERROR;
@@ -1052,7 +1021,7 @@ void FlowerFeatureExtractor::getInnerPartProperties(double& radius_inner, double
 
 	localMinPoints(contour_arr, center, out_arr_min, MIN_POINTS_THRESHOLD, min_points_inner);
 	drawPointsOnImage(img_draw_screen, out_arr_min, 2, CV_RGB(0x00,0x00,0xff), -1, 8, 0);
-	myShowImage("screen7", img_draw_screen);
+	Utils::myShowImage("screen7", img_draw_screen);
 
 	if(max_points_inner.empty() || min_points_inner.empty())
 		throw NoInnerMinMaxPointsException(); //NO_INNER_MIN_MAX_POINTS_FOUND_ERROR;
@@ -1089,7 +1058,7 @@ void FlowerFeatureExtractor::getFlowerContourAndColor(vector<Point>& max_flower_
 	img.copyTo(img_outer_contour);
 	equalizeLightness(img_outer_contour);
 	img_outer_contour.convertTo(img_outer_contour, -1, CONTRAST_RATIO_OUTER_CONTOUR); //contrast
-	myShowImage("lightness",img_outer_contour);
+	Utils::myShowImage("lightness",img_outer_contour);
 
 	for(background_mask_flag=0; background_mask_flag < BACKGROUND_MASK_FLAG_ITERATIONS; background_mask_flag++) { //if no contour at all is found, probably background color and flower color are the same. then, try to increase background mask radius to fix this
 		getDominantColors(dom_inner_color,dom_flower_color,dom_background_color,img,center,0, background_mask_flag);
@@ -1197,6 +1166,7 @@ bool FlowerFeatureExtractor::isGrayscale(Scalar& color)
 }
 
 void FlowerFeatureExtractor::extractFeaturesFromImage(string image_path, Point& center) {
+	cout << image_path << "\n";
 	Scalar dom_inner_color, dom_flower_color, dom_background_color;	
 
 	Mat img_opened;
@@ -1212,7 +1182,7 @@ void FlowerFeatureExtractor::extractFeaturesFromImage(string image_path, Point& 
 		throw EmptyImageException();
 	}
 
-	resizeImage(img_opened,img_resized);
+	Utils::resizeImage(img_opened,img_resized);
 
 
 	center.x=((center.x)*(img_resized.cols))/(img_opened.cols);
@@ -1223,7 +1193,10 @@ void FlowerFeatureExtractor::extractFeaturesFromImage(string image_path, Point& 
 	Mat img_meanshift;
 	//img_resized.copyTo(img_meanshift);
 
-	myShowImage("screen1", img_resized);
+	Mat img_draw_screen;
+	img_resized.copyTo(img_draw_screen);
+	circle(img_draw_screen, center, 5, CV_RGB(0x00,0x00,0x00), -1, 8, 0);
+	Utils::myShowImage("screen1", img_draw_screen);
 
 	//equalizeLightness(img_meanshift);
 	//mycvShowImage("screen1.3 lightness", img_meanshift);
@@ -1233,11 +1206,11 @@ void FlowerFeatureExtractor::extractFeaturesFromImage(string image_path, Point& 
 
 	//cvSmooth(img_meanshift, img_meanshift,CV_MEDIAN,7,3);
 
-	myShowImage("screen1.5 contrast", img_meanshift);
+	Utils::myShowImage("screen1.5 contrast", img_meanshift);
 	applyMeanShift(img_meanshift); //changes img size!
-	myShowImage("screen2", img_meanshift);
+	Utils::myShowImage("screen2", img_meanshift);
 
-	Mat img_draw_screen;
+	
 	img_meanshift.copyTo(img_draw_screen);
 
 

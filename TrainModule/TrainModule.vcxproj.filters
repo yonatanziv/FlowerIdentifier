@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="predict.cpp">
+    <ClCompile Include="train.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

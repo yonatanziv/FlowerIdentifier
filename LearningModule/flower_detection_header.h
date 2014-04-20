@@ -7,12 +7,12 @@
 #include <math.h>
 #include "svm_funcs_header.h"
 #include "exceptions.h"
+#include "utils.h"
 
 #include <stdio.h>
 //#include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include "dirent.h"
 #include <direct.h>
 #include  <io.h>
 #include <iostream>
@@ -66,7 +66,7 @@
 #define SVM_SERIALIZE_PATH "samples\\serialization\\svmSerialize.txt"
 #define MAX_POINTS_FLAG 0
 #define MIN_POINTS_FLAG 1
-#define DEBUG 1
+#define DEBUG 0
 
 class FlowerFeatureExtractor
 {
@@ -141,11 +141,7 @@ private:
 	void drawPointsOnImage(Mat& draw_img, Mat& contour_matrix_helper, int radius, const Scalar& color, int thickness, int line_type, int shift);
 
 
-	/*show image if DEBUG MODE is on*/
-	void myShowImage(const char* name, const Mat& image);
 
-
-	void showAndWait(const char* name, Mat& image);
 
 
 	/*	colorDst
@@ -211,9 +207,6 @@ private:
 	*	output: a pointer to an allocated histogram of the image area inside img_mask
 	*/
 	CvHistogram* createAndCalcHistogram(IplImage* img_hist, IplImage* img_mask);
-
-	void resizeImage(Mat& image, Mat& out);
-
 
 	/*	median
 	*	input: an array and its size

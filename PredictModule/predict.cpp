@@ -2,10 +2,6 @@
 
 #define SVM_SERIALIZATION_DIR_PATH "samples\\serialization"
 
-
-#include <windows.h>
-#include "Shlwapi.h"
-
 /* command line input: argv[1]=predict_img_path, argv[2]=center.x, argv[3]= center.y
  * This program uses the samples\serialization\svmSerialize.txt file created by the train module, 
  * takes the file given as a parameter and predicts which flower it is.

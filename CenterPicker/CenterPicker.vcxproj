@@ -10,23 +10,33 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CentersPicker.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LearningModule\LearningModule.vcxproj">
+      <Project>{d4c02607-c03b-4204-88bf-cd8c379773d8}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{274BE198-EB80-46CF-9A75-05D5167B5F77}</ProjectGuid>
-    <RootNamespace>PredictModule</RootNamespace>
+    <ProjectGuid>{FF4929FD-383E-4838-AF5F-1AF235786338}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>CenterPicker</RootNamespace>
+    <ProjectName>CentersPicker</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v110</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v110</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -39,22 +49,24 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
     <IncludePath>C:\Users\yonatan\Documents\openCV\opencv\build\include;C:\Users\yonatan\Documents\openCV\opencv\build\include\opencv;C:\Users\yonatan\Documents\openCV\opencv\build\include\opencv2;$(IncludePath)</IncludePath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LibraryPath>$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\yonatan\Documents\openCV\opencv\build\include\opencv2;C:\Users\yonatan\Documents\openCV\opencv\build\include\opencv;C:\Users\yonatan\Documents\openCV\opencv\build\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Users\yonatan\Documents\openCV\opencv\build\include;C:\Users\yonatan\Documents\openCV\opencv\build\include\opencv;C:\Users\yonatan\Documents\openCV\opencv\build\include\opencv2;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>C:\Users\yonatan\Documents\Visual Studio 2012\Projects\FlowerIdentifierLearning\LearningModule;$(OPENCV_DIR)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(OPENCV_DIR)\include;C:\Users\yonatan\Documents\Visual Studio 2012\Projects\FlowerIdentifierLearning\LearningModule;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>opencv_calib3d248.lib;opencv_calib3d248d.lib;opencv_contrib248.lib;opencv_contrib248d.lib;opencv_core248.lib;opencv_core248d.lib;opencv_features2d248.lib;opencv_features2d248d.lib;opencv_flann248.lib;opencv_flann248d.lib;opencv_gpu248.lib;opencv_gpu248d.lib;opencv_highgui248.lib;opencv_highgui248d.lib;opencv_imgproc248.lib;opencv_imgproc248d.lib;opencv_legacy248.lib;opencv_legacy248d.lib;opencv_ml248.lib;opencv_ml248d.lib;opencv_nonfree248.lib;opencv_nonfree248d.lib;opencv_objdetect248.lib;opencv_objdetect248d.lib;opencv_ocl248.lib;opencv_ocl248d.lib;opencv_photo248.lib;opencv_photo248d.lib;opencv_stitching248.lib;opencv_stitching248d.lib;opencv_superres248.lib;opencv_superres248d.lib;opencv_ts248.lib;opencv_ts248d.lib;opencv_video248.lib;opencv_video248d.lib;opencv_videostab248.lib;opencv_videostab248d.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Users\yonatan\Documents\openCV\opencv\build\x86\vc11\debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -63,27 +75,22 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Users\yonatan\Documents\Visual Studio 2012\Projects\FlowerIdentifierLearning\LearningModule;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>C:\Users\yonatan\Documents\openCV\opencv\build\x86\vc11\lib\opencv_core248.lib;C:\Users\yonatan\Documents\openCV\opencv\build\x86\vc11\lib\opencv_highgui248.lib;C:\Users\yonatan\Documents\openCV\opencv\build\x86\vc11\lib\opencv_video248.lib;C:\Users\yonatan\Documents\openCV\opencv\build\x86\vc11\lib\opencv_ml248.lib;C:\Users\yonatan\Documents\openCV\opencv\build\x86\vc11\lib\opencv_legacy248.lib;C:\Users\yonatan\Documents\openCV\opencv\build\x86\vc11\lib\opencv_imgproc248.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\yonatan\Documents\openCV\opencv\build\x86\vc11\debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="predict.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LearningModule\LearningModule.vcxproj">
-      <Project>{d4c02607-c03b-4204-88bf-cd8c379773d8}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
