@@ -19,8 +19,8 @@ void DataSample::toMatrix(Mat& sample_mat)
 	sample_mat.at<float>(0,4) = m_dom_inner_color_red/255;
 	sample_mat.at<float>(0,5) = m_dom_inner_color_green/255;
 	sample_mat.at<float>(0,6) = m_dom_inner_color_blue/255;
-	sample_mat.at<float>(0,7) = m_angle_min/(PI);
-	sample_mat.at<float>(0,8) = m_angle_max/(PI);
+	sample_mat.at<float>(0,7) = m_angle_min/(Consts::PI);
+	sample_mat.at<float>(0,8) = m_angle_max/(Consts::PI);
 	sample_mat.at<float>(0,9) = m_num_points_min/30;
 	sample_mat.at<float>(0,10) = m_num_points_max/30;
 	sample_mat.at<float>(0,11) = m_min_max_flower_ratio;
@@ -65,6 +65,33 @@ void TrainSet::addSample(DataSample& sample)
 
 	m_samples.push_back(sample_without_label);
 	m_labels.push_back<float>(sample.m_label);
+}
+
+void TrainSet::toCSV(string filepath)
+{
+	ofstream fout(filepath);
+
+	if(!fout)
+	{
+		cout<<"File Not Opened"<<endl;  return;
+	}
+
+	for(int i=0; i < m_samples.rows; i++)
+	{
+		fout << m_labels.at<float>(i,0)<<",";
+		for(int j=0; j < m_samples.cols; j++)
+		{
+			fout<<m_samples.at<float>(i,j);
+
+			if(j < m_samples.cols - 1)
+			{
+				fout << ",";
+			}
+		}		
+		fout<<endl;
+	}
+
+	fout.close();	
 }
 
 void SvmModel::load(string filepath) 

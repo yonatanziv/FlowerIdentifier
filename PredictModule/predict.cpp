@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
 	{
 		cout << "\n\n Predict:\n";
 
-		svm.load(SVM_SERIALIZE_PATH);
+		svm.load(Consts::SVM_SERIALIZE_PATH);
 
 		center.x=atoi(argv[2]);
 		center.y=atoi(argv[3]);

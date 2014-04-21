@@ -82,11 +82,13 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="consts.cpp" />
     <ClCompile Include="flower_detection_funcs.cpp" />
     <ClCompile Include="svm_funcs_code.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="consts.h" />
     <ClInclude Include="dirent.h" />
     <ClInclude Include="exceptions.h" />
     <ClInclude Include="flower_detection_header.h" />

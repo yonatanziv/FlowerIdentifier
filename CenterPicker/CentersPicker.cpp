@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
 			
 			namedWindow(name);
 
-			Utils::myShowImage(name, img_resized );
+			imshow(name, img_resized );
 			printf("%d: ",counter);
 
 			// Set up the callback

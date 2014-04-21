@@ -19,10 +19,8 @@
 */
 int main(int argc, char* argv[]) 
 {
-	DataSample current_sample;
 	SvmModel svm;
-	TrainSet trainSet;
-	FlowerFeatureExtractor flower_featurs;
+	TrainSet trainSet;	
 
 	FILE* centers=NULL;
 	Point center;
@@ -59,9 +57,10 @@ int main(int argc, char* argv[])
 			{
 				try 
 				{
-					current_sample.m_label=flowerID; //CHANGE TO FLOWER LABEL
-					flower_featurs.extractFeaturesFromImage(ent->d_name, center);
-					trainSet.addSample(current_sample);
+					FlowerFeatureExtractor flower_featurs(ent->d_name, center);
+					flower_featurs.extractFeaturesFromImage();
+					flower_featurs.m_sample.m_label = flowerID;//CHANGE TO FLOWER LABEL
+					trainSet.addSample(flower_featurs.m_sample);
 
 				} catch(exception& e) {
 					printf("Image %s dropped!\n", ent->d_name);					
@@ -107,7 +106,7 @@ int main(int argc, char* argv[])
 	closedir (dir);
 
 	/******** END DIR SCANNING CODE *************/
-
+	trainSet.toCSV("trainSetCsv.txt");
 	svm.train(trainSet);
 	
 	if(_chdir(SVM_SERIALIZATION_DIR_PATH)!=0){

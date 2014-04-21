@@ -14,7 +14,7 @@ DIR* Utils::MyChdir(char * path){
 }
 
 void Utils::toLowercase(char* str){
-	for(int i=0; i<strlen(str); i++){
+	for(int i=0; i < strlen(str); i++){
 		str[i]=tolower(str[i]);
 	}
 }
@@ -51,11 +51,11 @@ void Utils::resizeImage(Mat& image, Mat& resized_image) {
 	int height, width;
 
 	if(ratio < 1){
-		height = BASE_SIZE;
+		height = Consts::BASE_SIZE;
 		width = (int)(height*1.0/ratio);
 	}
 	else{
-		width = BASE_SIZE;
+		width = Consts::BASE_SIZE;
 		height = (int)width*ratio;
 	}
 
@@ -63,7 +63,7 @@ void Utils::resizeImage(Mat& image, Mat& resized_image) {
 }
 
 void Utils::myShowImage(const char* name, const Mat& image){
-	if(DEBUG){
+	if(Consts::DEBUG){
 		imshow(name, image);
 		cvWaitKey(10);
 	}
@@ -106,7 +106,6 @@ void Utils::convertRGBtoHSL (Scalar& rgb_color, Scalar& hsl_color){
 }
 
 double Utils::hue2rgb(double p, double q, double t){ //helper for convertHSLtoRGB
-	double ret;
 	if(t < 0) t += 1;
 	if(t > 1) t -= 1;
 	if(t < 1.0/6) return p + (q - p) * (6.0 * t);
@@ -155,7 +154,7 @@ bool Utils::isGrayscale(Scalar& color)
 {
 	Scalar hsl_color;
 	convertRGBtoHSL(color, hsl_color);
-	if(hsl_color.val[2]>=LIGHTNESS_THRESHOLD_WHITE || hsl_color.val[2]<=LIGHTNESS_THRESHOLD_BLACK || hsl_color.val[1]<=SATURATION_THRESHOLD_GRAY)
+	if(hsl_color.val[2] >= Consts::LIGHTNESS_THRESHOLD_WHITE || hsl_color.val[2] <= Consts::LIGHTNESS_THRESHOLD_BLACK || hsl_color.val[1] <= Consts::SATURATION_THRESHOLD_GRAY)
 		return true;
 	return false;
 }
@@ -175,8 +174,8 @@ void Utils::equalizeLightness(Mat& img)
 			rgb_pixel = Scalar(bgr[2].at<uchar>(i,j),bgr[1].at<uchar>(i,j),bgr[0].at<uchar>(i,j));
 			convertRGBtoHSL(rgb_pixel, hsl_pixel);
 
-			if(hsl_pixel.val[2]>=LIGHTNESS_THRESHOLD_FIX) {
-				hsl_pixel.val[2] = LIGHTNESS_VALUE_AFTER_FIX;
+			if(hsl_pixel.val[2] >= Consts::LIGHTNESS_THRESHOLD_FIX) {
+				hsl_pixel.val[2] = Consts::LIGHTNESS_VALUE_AFTER_FIX;
 
 				convertHSLtoRGB(hsl_pixel,rgb_pixel);
 				bgr[0].at<uchar>(i,j) = rgb_pixel.val[2];
@@ -263,7 +262,7 @@ double Utils::innerProduct(Point& v1, Point& v2)
 */
 double Utils::toDegree(double medAngle)
 {
-	return medAngle*180.0/PI;
+	return medAngle*180.0 / Consts::PI;
 }
 
 /* contourVar

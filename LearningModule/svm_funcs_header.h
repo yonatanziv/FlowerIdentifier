@@ -3,10 +3,10 @@
 
 #include "cv.h"
 #include "ml.h"
-#define PI 3.1415926f
 #include <windows.h>
 #include "Shlwapi.h"
 #include "exceptions.h"
+#include "consts.h"
 
 using namespace std;
 using namespace cv;
@@ -59,6 +59,8 @@ public:
 	*	output: adds sample to samples_data
 	*/
 	void addSample(DataSample& sample);
+
+	void toCSV(string filepath);
 };
 
 

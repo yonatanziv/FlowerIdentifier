@@ -88,6 +88,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\Users\yonatan\Documents\openCV\opencv\build\x86\vc11\debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>C:\Users\yonatan\Documents\openCV\opencv\build\x86\vc11\lib\opencv_core248.lib;C:\Users\yonatan\Documents\openCV\opencv\build\x86\vc11\lib\opencv_highgui248.lib;C:\Users\yonatan\Documents\openCV\opencv\build\x86\vc11\lib\opencv_video248.lib;C:\Users\yonatan\Documents\openCV\opencv\build\x86\vc11\lib\opencv_ml248.lib;C:\Users\yonatan\Documents\openCV\opencv\build\x86\vc11\lib\opencv_legacy248.lib;C:\Users\yonatan\Documents\openCV\opencv\build\x86\vc11\lib\opencv_imgproc248.lib;Shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

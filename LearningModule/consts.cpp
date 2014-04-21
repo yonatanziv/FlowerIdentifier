@@ -1,0 +1,45 @@
+//#define _USE_MATH_DEFINES
+#include "consts.h"
+
+const float Consts::PI												= 3.1415926;
+const int Consts::OUTER_COLOR_DST_THRESHOLD_DENOMINATOR				= 16;	//denominator of flower contour detection color thresholds. (determines step size)
+const int Consts::OUTER_COLOR_DST_THRESHOLD_START_NUMERATOR			= 8;	//start looking for inner contour, at START/DENOMINATOR of the color distance between flower dominant color and background dominant color
+const int Consts::OUTER_COLOR_DST_THRESHOLD_MAX_NUMERATOR			= 12;	//finish looking for inner contour, at MAX/DENOMINATOR of the color distance between flower dominant color and background dominant color
+const int Consts::COLOR_FLAG_ITERATIONS								= 4;	//changes color threshold in outer flower contour detection (iterative algorithm which tries different thresholds)
+const float Consts::COLOR_FLAG_STEP									= 0.05;	//changes the step of color threshold in outer flower contour detection (iterative algorithm which tries different thresholds)
+const int Consts::BACKGROUND_MASK_FLAG_ITERATIONS					= 4;	//changes background mask radius in outer flower contour detection (iterative algorithm which tries different radiuses)
+const int Consts::CONTOUR_FAIL_NO_POINTS							= -2;	//failure return flag - no points on contour found
+const int Consts::CONTOUR_FAIL_CENTER_POINT							= -3;	//failure return flag - center point not in contour
+const int Consts::CONTOUR_FAIL_BINARY_BACKGROUND					= -4;	//failure return flag - binary background image contains more white than black
+const int Consts::SUCCESS											= 0;
+const int Consts::NUM_BINS_FOR_COLOR								= 30;	//number of histogram bins per color axis (actually there are NUM_BINS_FOR_COLOR^3 bins)
+const int Consts::MAX_POINTS_THRESHOLD								= 7;	//padding threshold for max local points algorithm (minimum cells between two max points)
+const int Consts::MIN_POINTS_THRESHOLD								= 8;	//padding threshold for min local points algorithm (minimum cells between two min points)
+const int Consts::MEANSHIFT_LEVEL									= 1;	//parameter for meanshift algorithm
+const int Consts::MEANSHIFT_SPATIAL_RADIUS							= 20;	//parameter for meanshift algorithm
+const int Consts::MEANSHIFT_COLOR_RADIUS							= 40;	//parameter for meanshift algorithm
+const float Consts::CONTRAST_RATIO									= 1.2;	//level of contrast we apply to image, as preprocessing
+const float Consts::CONTRAST_RATIO_OUTER_CONTOUR					= 1.5;	//level of contrast we apply to image, when finding outer contour with lightness fix
+const float Consts::LIGHTNESS_THRESHOLD_WHITE						= 0.8;	//if lightness is higher than this threshold, color is considered white
+const float Consts::LIGHTNESS_THRESHOLD_BLACK						= 0.2;	//if lightness is lower than this threshold, color is considered black
+const float Consts::SATURATION_THRESHOLD_GRAY						= 0.15;	//if saturation is lower than this threshold, color is considered gray
+const float Consts::LIGHTNESS_THRESHOLD_FIX							= 0.2;	//lightness fix raises lightness only if original lightness is higher than this threshold
+const float Consts::LIGHTNESS_VALUE_AFTER_FIX						= 0.5;	//lightness fix raises lightness to this value
+const int Consts::BASE_SIZE											= 200;	//resize image to this size
+const int Consts::RADIUS_SMALL										= 3;	//radius of small binary mask 
+const int Consts::OPTIMAL_INNER_CONTOUR_START						= 10;	//start looking for inner contour, at START/QUOTIENT of the color distance between inner dominant color and flower dominant color
+const int Consts::OPTIMAL_INNER_CONTOUR_END							= 20;	//end looking for inner contour, at END/QUOTIENT of the color distance between inner dominant color and flower dominant color
+const int Consts::OPTIMAL_INNER_CONTOUR_QUOTIENT					= 30;	//quotient of color threshold ratio, as described above. (determines step size)
+const int Consts::FIX_BAD_MIN_MAX_POINTS_THRESHOLD_BIG_ANGLES		= 50;	//angles larger than this one are considered "big"
+const int Consts::FIX_BAD_MIN_MAX_POINTS_THRESHOLD_SMALL_ANGLES		= 25;	//angles smaller than this one are considered "small". angles larger than SMALL_ANGLES and smaller than BIG_ANGLES are considered "medium"
+const int Consts::FIX_BAD_MIN_MAX_POINTS_THRESHOLD_BIG				= 2;	//flag - big threshold for fix bad min max points algorithm
+const int Consts::FIX_BAD_MIN_MAX_POINTS_THRESHOLD_MEDIUM			= 3;	//flag - medium threshold for fix bad min max points algorithm
+const int Consts::FIX_BAD_MIN_MAX_POINTS_THRESHOLD_SMALL			= 4;	//flag - small threshold for fix bad min max points algorithm
+const int Consts::INNER_CONTOUR_EQUAL_FLOWER_CONTOUR_THRESHOLD		= 5;	//This threshold tells that if the the color distance between the inner contour and the flower contour is smaller than its value than the inner contour is same as the flower contour.
+const int Consts::MINIMUM_INNER_CONTOUR_POINTS						= 5;	//This number is the minimum number of points that inner contour should contain.
+const float Consts::INNER_RADIUS_TO_FLOWER_RADIUS_RATIO				= 0.5;	//In order to eliminate bad circles contours around center point.
+const int Consts::INNER_CONTUOR_MINIMUM_THRESHOLD					= 10;	//Minimum threshold to find inner contour. 
+const int Consts::MAX_POINTS_FLAG									= 0;
+const int Consts::MIN_POINTS_FLAG									= 1;
+const int Consts::DEBUG												= 1;
+const string Consts::SVM_SERIALIZE_PATH								= "samples\\serialization\\svmSerialize.txt";

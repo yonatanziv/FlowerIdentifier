@@ -25,10 +25,10 @@ void FlowerFeatureExtractor::localMinMaxPointsInner(Mat& image, Mat& outImage, i
 						if(Utils::padded_matrix_access(image, row+dx, col+dy) == 1 && (dx!=0 || dy!=0))
 						{
 							dst2 = Utils::distance(row+dx, col+dy, m_center.y, m_center.x);
-							if (min_max_flag == MAX_POINTS_FLAG) {
+							if (min_max_flag == Consts::MAX_POINTS_FLAG) {
 								if(dst2 > dst1)
 									flag = 1;
-							} else if (min_max_flag == MIN_POINTS_FLAG) {
+							} else if (min_max_flag == Consts::MIN_POINTS_FLAG) {
 								if(dst2 < dst1)
 									flag =1;
 							}
@@ -52,7 +52,7 @@ void FlowerFeatureExtractor::localMinMaxPointsInner(Mat& image, Mat& outImage, i
 */
 void FlowerFeatureExtractor::localMaxPoints(Mat& image, Mat& outImage, int resolution, vector<Point>& max_points)
 {	
-	localMinMaxPointsInner(image, outImage, resolution, max_points, MAX_POINTS_FLAG);
+	localMinMaxPointsInner(image, outImage, resolution, max_points, Consts::MAX_POINTS_FLAG);
 }
 
 /*	localMinPoints
@@ -62,7 +62,7 @@ void FlowerFeatureExtractor::localMaxPoints(Mat& image, Mat& outImage, int resol
 */
 void FlowerFeatureExtractor::localMinPoints(Mat& image, Mat& outImage, int resolution, vector<Point>& min_points)
 {	
-	localMinMaxPointsInner(image, outImage, resolution, min_points, MIN_POINTS_FLAG);
+	localMinMaxPointsInner(image, outImage, resolution, min_points, Consts::MIN_POINTS_FLAG);
 }
 
 /*	drawArrPointsOnImage
@@ -188,7 +188,7 @@ void FlowerFeatureExtractor::findClosestToCenterPointContour(vector<vector<Point
 
 		//showAndWait(argv[0],img_draw_screen);
 
-		if(contours.at(i).size() >= MINIMUM_INNER_CONTOUR_POINTS) {
+		if(contours.at(i).size() >= Consts::MINIMUM_INNER_CONTOUR_POINTS) {
 			dst = Utils::contourToPointDst(contours.at(i), m_center);
 			if(minDst == -1 || dst < minDst) {
 				minDst = dst;
@@ -206,9 +206,10 @@ void FlowerFeatureExtractor::findClosestToCenterPointContour(vector<vector<Point
 void FlowerFeatureExtractor::applyMeanShift()
 {
 	//Here comes the thing (fix for meanshift)
-	m_image.cols &= -(1<<MEANSHIFT_LEVEL);
-	m_image.rows &= -(1<<MEANSHIFT_LEVEL);
-	pyrMeanShiftFiltering(m_image, m_image, MEANSHIFT_SPATIAL_RADIUS, MEANSHIFT_COLOR_RADIUS, MEANSHIFT_LEVEL);
+	int meanshift_level = Consts::MEANSHIFT_LEVEL;
+	m_image.cols &= -(1<<meanshift_level);
+	m_image.rows &= -(1<<meanshift_level);
+	pyrMeanShiftFiltering(m_image, m_image, Consts::MEANSHIFT_SPATIAL_RADIUS, Consts::MEANSHIFT_COLOR_RADIUS, Consts::MEANSHIFT_LEVEL);
 }
 
 /* createAndCalcHistogram
@@ -217,7 +218,7 @@ void FlowerFeatureExtractor::applyMeanShift()
 */
 CvHistogram* FlowerFeatureExtractor::createAndCalcHistogram(IplImage* img_hist, IplImage* img_mask){
 	CvHistogram* hist;
-	int numBins[3] = {NUM_BINS_FOR_COLOR, NUM_BINS_FOR_COLOR, NUM_BINS_FOR_COLOR};
+	int numBins[3] = {Consts::NUM_BINS_FOR_COLOR, Consts::NUM_BINS_FOR_COLOR, Consts::NUM_BINS_FOR_COLOR};
 	float range[] = {0, 256};
 	float *ranges[] = {range,range,range};
 	hist = cvCreateHist(3, numBins, CV_HIST_ARRAY, ranges, 1);
@@ -262,10 +263,10 @@ void FlowerFeatureExtractor::getOptimalInnerContour(vector<Point>& max_inner_con
 	int threshold_small;
 	char name[100];
 
-	for(int i = OPTIMAL_INNER_CONTOUR_START; i < OPTIMAL_INNER_CONTOUR_END; i++){
+	for(int i = Consts::OPTIMAL_INNER_CONTOUR_START; i < Consts::OPTIMAL_INNER_CONTOUR_END; i++){
 		colorDistance = Utils::colorDst(dom_flower_color, dom_inner_color);
-		threshold_small = colorDistance * ((i*1.0) / OPTIMAL_INNER_CONTOUR_QUOTIENT);
-		threshold_small = threshold_small < INNER_CONTUOR_MINIMUM_THRESHOLD ? INNER_CONTUOR_MINIMUM_THRESHOLD : threshold_small;
+		threshold_small = colorDistance * ((i*1.0) / Consts::OPTIMAL_INNER_CONTOUR_QUOTIENT);
+		threshold_small = threshold_small < Consts::INNER_CONTUOR_MINIMUM_THRESHOLD ? Consts::INNER_CONTUOR_MINIMUM_THRESHOLD : threshold_small;
 		//printf("SMALL THRESHOLD - %d",threshold_small);
 
 		toBinaryByDominantColorWithContour(m_image, img_binary_small, dom_inner_color, threshold_small, m_max_flower_contour);
@@ -279,7 +280,7 @@ void FlowerFeatureExtractor::getOptimalInnerContour(vector<Point>& max_inner_con
 			findClosestToCenterPointContour(contours, current_inner_contour);
 
 		if(current_inner_contour.empty()){	
-			if(colorDistance <= INNER_CONTOUR_EQUAL_FLOWER_CONTOUR_THRESHOLD){	//if there is no inner contour the inner and outer contours are identical.
+			if(colorDistance <= Consts::INNER_CONTOUR_EQUAL_FLOWER_CONTOUR_THRESHOLD){	//if there is no inner contour the inner and outer contours are identical.
 				max_inner_contour = m_max_flower_contour;
 				return;
 			}
@@ -290,7 +291,7 @@ void FlowerFeatureExtractor::getOptimalInnerContour(vector<Point>& max_inner_con
 			continue;
 		}
 
-		if(circle_around_center_ponit_flag == 1 && current_inner_contour.size() <= MINIMUM_INNER_CONTOUR_POINTS){
+		if(circle_around_center_ponit_flag == 1 && current_inner_contour.size() <= Consts::MINIMUM_INNER_CONTOUR_POINTS){
 			continue;
 		}
 
@@ -309,7 +310,7 @@ void FlowerFeatureExtractor::getOptimalInnerContour(vector<Point>& max_inner_con
 		Mat circle_image = Mat(m_image.size(), CV_8UC1);
 		double radius = Utils::avgDst(optimal_contour, m_center);
 
-		if(radius <= INNER_RADIUS_TO_FLOWER_RADIUS_RATIO * radius_max) {
+		if(radius <= Consts::INNER_RADIUS_TO_FLOWER_RADIUS_RATIO * radius_max) {
 			createCircleMask(circle_image, radius);
 			findContours(circle_image, contours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
 			findMaxContour(contours, optimal_contour);
@@ -393,11 +394,11 @@ double FlowerFeatureExtractor::getMedianAngle(vector<Point>& min_max_points, dou
 int FlowerFeatureExtractor::getFixBadMinMaxPointsThreshold(double medAngle)
 {
 	double angle = Utils::toDegree(medAngle);
-	if(angle <= FIX_BAD_MIN_MAX_POINTS_THRESHOLD_SMALL_ANGLES)
-		return FIX_BAD_MIN_MAX_POINTS_THRESHOLD_SMALL;
-	if(angle <= FIX_BAD_MIN_MAX_POINTS_THRESHOLD_BIG_ANGLES)
-		return FIX_BAD_MIN_MAX_POINTS_THRESHOLD_MEDIUM;
-	return FIX_BAD_MIN_MAX_POINTS_THRESHOLD_BIG;
+	if(angle <= Consts::FIX_BAD_MIN_MAX_POINTS_THRESHOLD_SMALL_ANGLES)
+		return Consts::FIX_BAD_MIN_MAX_POINTS_THRESHOLD_SMALL;
+	if(angle <= Consts::FIX_BAD_MIN_MAX_POINTS_THRESHOLD_BIG_ANGLES)
+		return Consts::FIX_BAD_MIN_MAX_POINTS_THRESHOLD_MEDIUM;
+	return Consts::FIX_BAD_MIN_MAX_POINTS_THRESHOLD_BIG;
 
 }
 
@@ -475,10 +476,10 @@ void FlowerFeatureExtractor::createCircleMasks( Mat& img_mask_small, Mat& img_ma
 	int radius_large = m_center.x > m_center.y ? m_center.y : m_center.x;	
 	int radius_background = radius_large;
 
-	radius_large*=1 - (COLOR_FLAG_STEP * mask_flag);
-	radius_background*= 1 + (COLOR_FLAG_STEP * background_mask_flag);
+	radius_large*=1 - (Consts::COLOR_FLAG_STEP * mask_flag);
+	radius_background*= 1 + (Consts::COLOR_FLAG_STEP * background_mask_flag);
 
-	createCircleMask(img_mask_small, RADIUS_SMALL);
+	createCircleMask(img_mask_small, Consts::RADIUS_SMALL);
 	createCircleMask(img_mask_large, radius_large);
 	createCircleMask(img_mask_background, radius_background);	
 	flipMask(img_mask_background);
@@ -521,17 +522,17 @@ void FlowerFeatureExtractor::getDominantColors(Scalar& dom_inner_color, Scalar& 
 
 	/* END DOMINANT COLOR */
 
-	dom_inner_color=Scalar((maxIndexInner[0]*256)/NUM_BINS_FOR_COLOR,
-		(maxIndexInner[1]*256)/NUM_BINS_FOR_COLOR,
-		(maxIndexInner[2]*256)/NUM_BINS_FOR_COLOR);
+	dom_inner_color=Scalar((maxIndexInner[0]*256)/Consts::NUM_BINS_FOR_COLOR,
+		(maxIndexInner[1]*256)/Consts::NUM_BINS_FOR_COLOR,
+		(maxIndexInner[2]*256)/Consts::NUM_BINS_FOR_COLOR);
 
-	dom_flower_color=Scalar((maxIndexFlower[0]*256)/NUM_BINS_FOR_COLOR,
-		(maxIndexFlower[1]*256)/NUM_BINS_FOR_COLOR,
-		(maxIndexFlower[2]*256)/NUM_BINS_FOR_COLOR);
+	dom_flower_color=Scalar((maxIndexFlower[0]*256)/Consts::NUM_BINS_FOR_COLOR,
+		(maxIndexFlower[1]*256)/Consts::NUM_BINS_FOR_COLOR,
+		(maxIndexFlower[2]*256)/Consts::NUM_BINS_FOR_COLOR);
 
-	dom_background_color=Scalar((maxIndexBackground[0]*256)/NUM_BINS_FOR_COLOR,
-		(maxIndexBackground[1]*256)/NUM_BINS_FOR_COLOR,
-		(maxIndexBackground[2]*256)/NUM_BINS_FOR_COLOR);
+	dom_background_color=Scalar((maxIndexBackground[0]*256)/Consts::NUM_BINS_FOR_COLOR,
+		(maxIndexBackground[1]*256)/Consts::NUM_BINS_FOR_COLOR,
+		(maxIndexBackground[2]*256)/Consts::NUM_BINS_FOR_COLOR);
 
 	cvReleaseHist(&hist_small);
 	cvReleaseHist(&hist_large);
@@ -546,7 +547,7 @@ void FlowerFeatureExtractor::getDominantColors(Scalar& dom_inner_color, Scalar& 
 */
 int FlowerFeatureExtractor::getThresholdByFlag( int color_flag, Scalar& dom_flower_color, Scalar& dom_background_color )
 {
-	return Utils::colorDst(dom_flower_color,dom_background_color)*(OUTER_COLOR_DST_THRESHOLD_START_NUMERATOR + color_flag)/OUTER_COLOR_DST_THRESHOLD_DENOMINATOR;
+	return Utils::colorDst(dom_flower_color,dom_background_color)*(Consts::OUTER_COLOR_DST_THRESHOLD_START_NUMERATOR + color_flag) / Consts::OUTER_COLOR_DST_THRESHOLD_DENOMINATOR;
 }
 
 /* checkBinaryBackground
@@ -561,7 +562,7 @@ void FlowerFeatureExtractor::checkBinaryBackground(Mat& img_binary, int backgrou
 
 	int radius_background = m_center.x > m_center.y ? m_center.y : m_center.x;	
 
-	radius_background*= 1 + (COLOR_FLAG_STEP * background_mask_flag);
+	radius_background*= 1 + (Consts::COLOR_FLAG_STEP * background_mask_flag);
 
 	createCircleMask(img_mask_background, radius_background);
 	flipMask(img_mask_background);
@@ -613,7 +614,7 @@ int FlowerFeatureExtractor::getOptimalFlowerContour(Mat& img, Scalar& dom_flower
 
 		findContours(img_binary, contours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
 		if (contours.size() == 0) {
-			return CONTOUR_FAIL_NO_POINTS;
+			return Consts::CONTOUR_FAIL_NO_POINTS;
 		}
 
 		img.copyTo(m_draw_image);
@@ -624,12 +625,12 @@ int FlowerFeatureExtractor::getOptimalFlowerContour(Mat& img, Scalar& dom_flower
 		center2f.x = m_center.x;
 		center2f.y = m_center.y;
 		if(pointPolygonTest(m_max_flower_contour, center2f, 0) <= 0)
-			return CONTOUR_FAIL_CENTER_POINT;
+			return Consts::CONTOUR_FAIL_CENTER_POINT;
 
-		return SUCCESS;
+		return Consts::SUCCESS;
 		
 	} catch (ContourFailBinaryBackgroundException& e) {
-		return CONTOUR_FAIL_BINARY_BACKGROUND;
+		return Consts::CONTOUR_FAIL_BINARY_BACKGROUND;
 	} 
 	
 }
@@ -650,7 +651,7 @@ void FlowerFeatureExtractor::getOuterFlowerProperties(int& num_points_max, int& 
 	Utils::contourToMatrix(m_max_flower_contour, contour_matrix);
 	contour_matrix.copyTo(contour_matrix_helper);
 
-	localMaxPoints(contour_matrix, contour_matrix_helper, MAX_POINTS_THRESHOLD, max_points);
+	localMaxPoints(contour_matrix, contour_matrix_helper, Consts::MAX_POINTS_THRESHOLD, max_points);
 	drawPointsOnImage(contour_matrix_helper, CV_RGB(0x00,0x00,0x00));
 	if(max_points.size() == 0)
 		throw NoOuterMaxPointsFoundException();
@@ -662,7 +663,7 @@ void FlowerFeatureExtractor::getOuterFlowerProperties(int& num_points_max, int& 
 	
 	num_points_max = fixBadMinMaxPoints(max_points, angle_max, img_with_contours);
 	contour_matrix.copyTo(contour_matrix_helper);
-	localMinPoints(contour_matrix, contour_matrix_helper, MIN_POINTS_THRESHOLD, min_points);
+	localMinPoints(contour_matrix, contour_matrix_helper, Consts::MIN_POINTS_THRESHOLD, min_points);
 	drawPointsOnImage(contour_matrix_helper, CV_RGB(0x00,0x00,0xff));
 	Utils::myShowImage("screen6", m_draw_image);
 
@@ -715,10 +716,10 @@ void FlowerFeatureExtractor::getInnerPartProperties(double& radius_inner, double
 	contour_arr.copyTo(out_arr_max);
 	contour_arr.copyTo(out_arr_min);
 
-	localMaxPoints(contour_arr, out_arr_max, MAX_POINTS_THRESHOLD, max_points_inner);
+	localMaxPoints(contour_arr, out_arr_max, Consts::MAX_POINTS_THRESHOLD, max_points_inner);
 	drawPointsOnImage(out_arr_max, CV_RGB(0xff,0x00,0x00));
 
-	localMinPoints(contour_arr, out_arr_min, MIN_POINTS_THRESHOLD, min_points_inner);
+	localMinPoints(contour_arr, out_arr_min, Consts::MIN_POINTS_THRESHOLD, min_points_inner);
 	drawPointsOnImage(out_arr_min, CV_RGB(0x00,0x00,0xff));
 	Utils::myShowImage("screen7", m_draw_image);
 
@@ -746,7 +747,7 @@ void FlowerFeatureExtractor::getFlowerContourAndColor(Scalar& dom_inner_color, S
 													  Scalar& dom_background_color)
 {
 	int mask_flag, color_flag, contour_fail, background_mask_flag;
-	int mask_end = OUTER_COLOR_DST_THRESHOLD_MAX_NUMERATOR - OUTER_COLOR_DST_THRESHOLD_START_NUMERATOR;
+	int mask_end = Consts::OUTER_COLOR_DST_THRESHOLD_MAX_NUMERATOR - Consts::OUTER_COLOR_DST_THRESHOLD_START_NUMERATOR;
 	Scalar dom_color_temp_hsl;
 	/*LIGHTNESS FIX*/
 	Scalar dom_inner_color_outer_contour, dom_flower_color_outer_contour, dom_background_color_outer_contour;
@@ -754,10 +755,10 @@ void FlowerFeatureExtractor::getFlowerContourAndColor(Scalar& dom_inner_color, S
 
 	m_image.copyTo(img_outer_contour);
 	Utils::equalizeLightness(img_outer_contour);
-	img_outer_contour.convertTo(img_outer_contour, -1, CONTRAST_RATIO_OUTER_CONTOUR); //contrast
+	img_outer_contour.convertTo(img_outer_contour, -1, Consts::CONTRAST_RATIO_OUTER_CONTOUR); //contrast
 	Utils::myShowImage("lightness",img_outer_contour);
 
-	for(background_mask_flag=0; background_mask_flag < BACKGROUND_MASK_FLAG_ITERATIONS; background_mask_flag++) { //if no contour at all is found, probably background color and flower color are the same. then, try to increase background mask radius to fix this
+	for(background_mask_flag=0; background_mask_flag < Consts::BACKGROUND_MASK_FLAG_ITERATIONS; background_mask_flag++) { //if no contour at all is found, probably background color and flower color are the same. then, try to increase background mask radius to fix this
 		getDominantColors(dom_inner_color, dom_flower_color, dom_background_color, m_image, 0, background_mask_flag);
 		Utils::convertRGBtoHSL(dom_flower_color, dom_color_temp_hsl); //for printing color
 		
@@ -779,10 +780,10 @@ void FlowerFeatureExtractor::getFlowerContourAndColor(Scalar& dom_inner_color, S
 		m_image.copyTo(m_draw_image);
 		Utils::drawOneContour(m_draw_image, m_max_flower_contour, CV_RGB(0x00,0xff,0x00));
 		
-		if(contour_fail != CONTOUR_FAIL_NO_POINTS)	//Here we care only about that error, because we want to make sure that we got the right background dominant color. Therefore we dont check CONTOUR_FAIL_BINARY_BACKGROUND
+		if(contour_fail != Consts::CONTOUR_FAIL_NO_POINTS)	//Here we care only about that error, because we want to make sure that we got the right background dominant color. Therefore we dont check CONTOUR_FAIL_BINARY_BACKGROUND
 			break;
 	}
-	for(color_flag=0; color_flag < COLOR_FLAG_ITERATIONS; color_flag++) { //runs on color thresholds
+	for(color_flag=0; color_flag < Consts::COLOR_FLAG_ITERATIONS; color_flag++) { //runs on color thresholds
 		for(mask_flag=0; mask_flag < mask_end; mask_flag++) { //runs on mask radius	
 			getDominantColors(dom_inner_color, dom_flower_color, dom_background_color, 
 				m_image, mask_flag, background_mask_flag); //mask_flag to set radius for mask
@@ -808,10 +809,10 @@ void FlowerFeatureExtractor::getFlowerContourAndColor(Scalar& dom_inner_color, S
 			Utils::drawOneContour(m_draw_image, m_max_flower_contour, CV_RGB(0x00,0xff,0x00));
 			
 			//printf("mask_flag: %d, color_flag: %d\n",mask_flag,color_flag);
-			if(contour_fail==CONTOUR_FAIL_BINARY_BACKGROUND)
+			if(contour_fail == Consts::CONTOUR_FAIL_BINARY_BACKGROUND)
 				printf("CONTOUR_FAIL_BINARY_BACKGROUND\n");
 
-			if(contour_fail == SUCCESS){ //if we found the contour
+			if(contour_fail == Consts::SUCCESS){ //if we found the contour
 				return;
 			}
 		}
@@ -840,7 +841,7 @@ void FlowerFeatureExtractor::extractFeaturesFromImage() {
 	//equalizeLightness(img_meanshift);
 	//mycvShowImage("screen1.3 lightness", img_meanshift);
 
-	m_image.convertTo(m_image, -1, CONTRAST_RATIO);
+	m_image.convertTo(m_image, -1, Consts::CONTRAST_RATIO);
 
 	//cvSmooth(img_meanshift, img_meanshift,CV_MEDIAN,7,3);
 
@@ -873,7 +874,7 @@ void FlowerFeatureExtractor::extractFeaturesFromImage() {
 
 	double flower_length = arcLength(m_max_flower_contour, true);
 	double flower_area = contourArea(m_max_flower_contour);
-	m_sample.m_length_area_ratio = flower_area*(4*PI)/(flower_length*flower_length);
+	m_sample.m_length_area_ratio = flower_area*(4*Consts::PI)/(flower_length*flower_length);
 	/* END UPDATE SAMPLE STRUCT */
 
 	m_image.copyTo(m_draw_image);	

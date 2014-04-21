@@ -7,8 +7,7 @@
 
 /* command line input: argv[1]=predict_img_path, argv[2]=center.x, argv[3]= center.y
    return -1 on error, 0 if couldnt recognize the image, and the id of the input flower otherwise*/
-int main(int argc, char* argv[]) {
-	FlowerFeatureExtractor flower_featurs;
+int main(int argc, char* argv[]) {	
 	SvmModel svm;
 	double res =-1;
 	Point center;
@@ -21,7 +20,7 @@ int main(int argc, char* argv[]) {
 
 	try 
 	{
-		svm.load(SVM_SERIALIZE_PATH);
+		svm.load(Consts::SVM_SERIALIZE_PATH);
 
 		printf("\n\n Predict:\n");
 		//loop over files
@@ -63,7 +62,8 @@ int main(int argc, char* argv[]) {
 					if(center.x!=-1 && center.y!=-1)
 					{
 						try {
-							flower_featurs.extractFeaturesFromImage(ent->d_name, center);
+							FlowerFeatureExtractor flower_featurs(ent->d_name, center);
+							flower_featurs.extractFeaturesFromImage();
 							res = svm.predict(flower_featurs.m_sample);
 							printf("** Predicting: %s is %lf **\n\n", ent->d_name, res);	
 						}   catch(exception& e) {
