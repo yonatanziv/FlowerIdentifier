@@ -227,3 +227,182 @@ int Utils::colorDst(Scalar& color1, Scalar& color2)
 	double dst = square(color1.val[0]-color2.val[0]) + square(color1.val[1]-color2.val[1]) + square(color1.val[2]-color2.val[2]);
 	return sqrt(dst);
 }
+
+void Utils::drawOneContour(Mat& draw_image, vector<Point>& contour,CvScalar& color)
+{
+	vector<vector<Point> > contour_vec;
+	contour_vec.push_back(contour);
+	drawContours(draw_image, contour_vec, 0, color, 2, 8, noArray(), 0); // Try different values of max_level, and see what happens
+}
+
+
+/*	angle
+*	input: gets three points
+*	output: calculates angle between the three points
+*/
+double Utils::angle(Point& center, Point& p1, Point& p2)
+{
+	Point v1,v2;
+	v1.x = p1.x-center.x;
+	v1.y = p1.y-center.y;
+
+	v2.x = p2.x-center.x;
+	v2.y = p2.y-center.y;
+
+	return abs(acos(innerProduct(v1,v2)/sqrt(innerProduct(v1,v1)*innerProduct(v2,v2))));
+}
+
+double Utils::innerProduct(Point& v1, Point& v2)
+{
+	return v1.x*v2.x + v1.y*v2.y;
+}
+
+/*	toDegree
+*	input: angle in radians
+*	output: angle in degrees
+*/
+double Utils::toDegree(double medAngle)
+{
+	return medAngle*180.0/PI;
+}
+
+/* contourVar
+*	input: a contour and flower's center
+*	output: returns variance of distances between a point on the contour and the center point
+*/
+double Utils::contourVar(vector<Point>& contour, Point& center) {
+	double Ex = 0; //E[x]
+	double Ex2 = 0;//E[x^2]
+	int i;
+
+	for( i=0; i < contour.size(); ++i ){	
+		Ex += point_distance(contour.at(i), center);
+		Ex2 += square(contour.at(i).x-center.x) + square(contour.at(i).y-center.y);
+	}
+
+	Ex /= i;
+	Ex2 /= i;
+
+	return Ex2 - Ex*Ex;
+}
+
+/*avgDst
+*input: contour and center point.
+*output: The average distance between the center point and the contour. 
+*/
+double Utils::avgDst(vector<Point>& contour, Point& center){
+	double radius = 0;
+	for(int i=0; i < contour.size(); ++i ){	
+		radius += point_distance(contour.at(i), center);
+	}
+	radius /= contour.size();
+	return radius;
+}
+
+
+/*
+*	input:	- one point of the array
+- array of points
+- isVisited - the index of points to be ignored. (chosen to be closest to other points already).
+- currentPointIndex - the index of the above point. its also need to be ignored.
+output:	- the index of the closest point
+*/
+int Utils::getClosestPoint(int currentPointIndex, vector<Point>& min_max_points, vector<int>& isVisited)
+{
+	double dst, min = -1;
+	int minIndex;
+	Point minPoint;
+	Point point = min_max_points.at(currentPointIndex);
+
+	for(int i = 0; i <min_max_points.size(); i++)
+	{		
+		if(i == currentPointIndex || isVisited.at(i)==1)
+			continue;
+		dst = point_distance(point, min_max_points.at(i));
+		if(min == -1 || dst < min) {
+			min = dst;
+			minPoint = min_max_points.at(i);
+			minIndex = i;
+		}
+	}
+	return minIndex;
+}
+
+
+/*	median
+*	input: an array and its size
+*	output: median of the values in the array
+*/
+double Utils::median(vector<double>& vec)
+{
+	if(vec.empty()) 
+		return 0;
+	else {
+		sort(vec.begin(), vec.end());
+		if(vec.size() % 2 == 0)
+			return (vec.at(vec.size()/2 - 1) + vec.at(vec.size()/2)) / 2;
+		else
+			return vec.at(vec.size()/2);
+	}
+}
+
+/* radiusOutOfPoints
+input: an array of points, its size, a center point
+output: median of the distances between a point from the array and the center point
+*/
+double Utils::radiusOutOfPoints(vector<Point>& max_points, Point& center)
+{
+	double result;
+	vector<double> distances;
+	for(int i =0; i < max_points.size(); i++) {
+		distances.push_back(point_distance(max_points.at(i), center));
+	}
+	result = median(distances);
+	return result;
+}
+
+/*	getMinMaxFlowerRatio
+*	input: minimum points on outer flower contour, radius of outer flower contour
+*	output: returns ratio between closest minimum point to the center and the outer contour ratio
+*/
+double Utils::getMinMaxFlowerRatio(vector<Point> min_points, double radius_max, Point& center)
+{
+	double min_distance;
+	vector<double> distances;
+	for(int i =0; i < min_points.size(); i++) {
+		distances.push_back(point_distance(min_points.at(i), center));
+	}
+
+	for(int i=0; i < min_points.size(); i++){
+		if(i==0)
+			min_distance = distances.at(i);
+		else if(min_distance > distances.at(i))
+			min_distance = distances.at(i);
+	}
+
+	return min_distance / radius_max;
+}
+
+/* contourToArray
+*	input: a contour, a two-dim allocated array
+*	output: the contour points in a two-dim int array (which represents a binary image). contour points will have 1 in array
+*/
+void Utils::contourToMatrix(vector<Point> contour, Mat& arr)
+{
+	for( int i=0; i<contour.size(); ++i ) {
+		arr.at<uchar>(contour.at(i).y, contour.at(i).x) = 1;
+	}
+}
+
+double Utils::contourToPointDst(vector<Point>& contour, Point& center)
+{
+	double minDst = -1;
+	double dst =0;
+
+	for(int i=0; i < contour.size(); ++i ){	
+		dst = Utils::point_distance(contour.at(i), center);
+		if(minDst == -1 || dst < minDst)
+			minDst = dst;
+	}
+	return minDst;
+}

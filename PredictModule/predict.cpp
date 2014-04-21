@@ -30,6 +30,7 @@ int main(int argc, char* argv[]) {
 		FlowerFeatureExtractor flower_featurs(argv[1], center);
 		flower_featurs.extractFeaturesFromImage();
 		res = svm.predict(flower_featurs.m_sample);
+		flower_featurs.m_sample.toCSV("csv4.txt");
 		printf("** Predicting: %s is %lf **\n\n", argv[1], res);
 
 	}  catch(exception& e) {
