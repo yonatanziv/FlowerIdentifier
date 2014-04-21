@@ -39,13 +39,15 @@ public:
 	*	output: an array representing the same sample (needed as input for train)
 	*/
 	void toMatrix(Mat& sample_mat);
+
+	void toCSV(string filepath);
 };
 
 
 /*	struct Svm_Data
 *	collects all samples we got so far (together with their labels)
 */
-//collects all the samples we have
+//collects all the samples we  have
 class TrainSet
 {
 public:

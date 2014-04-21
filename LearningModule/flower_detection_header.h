@@ -66,7 +66,7 @@
 #define SVM_SERIALIZE_PATH "samples\\serialization\\svmSerialize.txt"
 #define MAX_POINTS_FLAG 0
 #define MIN_POINTS_FLAG 1
-#define DEBUG 0
+#define DEBUG 1
 
 class FlowerFeatureExtractor
 {
@@ -78,42 +78,15 @@ public:
 	*	output: updates samples struct with sample parameters of image in image_path. uses center point for calculations
 	*	return: -1 on fail (image dropped because of problems with sample struct, 0 on success
 	*/
-	void extractFeaturesFromImage(string image_path, Point& center);
+	void extractFeaturesFromImage();
+
+	FlowerFeatureExtractor(string image_path, Point& center);
 
 private:
 
-	bool isGrayscale(Scalar& color);
-
-	/*	equalizeLightness
-	*	input: an IplImage pointer
-	*	output: sets lightness in all pixels to be 50 (shadow remover).
-	*/
-	void equalizeLightness(Mat& img);
-
-	/*return x^2*/
-	int square(int x);
-
-
-	/*	distance
-	*	input: two points (x1,y1),(x2,y2)
-	*	output: euclidean distance between them
-	*/
-	double distance(int y1, int x1, int y2, int x2);
-
-
-	/*	distance
-	*	input: two CvPoint points
-	*	output: euclidean distance between them
-	*/
-	double point_distance(Point& point1, Point& point2);
-
-
-	/*	padded_array_access
-	*	input: an int array, its size, and a cell in it (row and col)
-	*	output: returns image[row][col] if the indices are inside the array, 0 otherwise
-	*	used to prevent falling out of array in localMaxPoints and localMinPoints
-	*/
-	int padded_matrix_access(Mat& image, int x, int y);
+	Mat m_image;
+	Mat m_draw_image;
+	Point m_center;
 
 
 	void localMinMaxPointsInner(Mat& image, Point& center, Mat& outImage, int resolution, 
@@ -142,20 +115,11 @@ private:
 
 
 
-
-
-	/*	colorDst
-	*	input: two colors
-	*	output: returns euclidean distance between the points (as three-dimensional points (R,G,B))
-	*/
-	int colorDst(Scalar& color1, Scalar& color2);
-
-
 	/* createCircleMask
 	*	input: an image (for mask output), radius, center
 	*	output: a binary image containing a filled circle, with specified radius, around center
 	*/
-	void createCircleMask(Mat& img_mask, int radius, Point& center);
+	void createCircleMask(Mat& img_mask, int radius);
 
 
 	/* flipMask
@@ -199,7 +163,7 @@ private:
 	*	input: an image
 	*	output: the image, after applying the meanshift algorithm on it. contains a fix to the size of the image, to allow the meanshift to work
 	*/
-	void applyMeanShift(Mat& img_meanshift);
+	void applyMeanShift();
 
 
 	/* createAndCalcHistogram
@@ -313,32 +277,18 @@ private:
 	int fixBadMinMaxPoints(vector<Point>& min_max_points, Point& center, Mat& draw_img, double& outMedAngle, Mat& img_meanshift);
 
 
-	void convertRGBtoHSV(CvScalar* rgb_color, CvScalar* hsv_color);
-
-
-	void convertRGBtoHSL (Scalar& rgb_color, Scalar& hsl_color);
-
-
-	double hue2rgb(double p, double q, double t); //helper for convertHSLtoRGB
-
-
-	void convertHSLtoRGB(Scalar& hsl_color, Scalar& rgb_color);
-
-	void bgr2rgb(Scalar& bgr, Scalar& rgb);
-
-
 	/*	createCircleMasks
 	*	input: binary mask (IplImage) pointers, mask_flag (changes inner mask radius, by steps same as COLOR_FLAG_STEP), background_mask_flag (changes background mask radius, by steps same as COLOR_FLAG_STEP)
 	*	output: creates the required inner part, flower, and background binary masks according to flags
 	*/
-	void createCircleMasks(Mat& img_mask_small, Mat& img_mask_large, Mat& img_mask_background,Point& center,int mask_flag,int background_mask_flag);
+	void createCircleMasks(Mat& img_mask_small, Mat& img_mask_large, Mat& img_mask_background, int mask_flag, int background_mask_flag);
 
 
 	/*	getDominantColors
 	*	input: dominant color struct pointers, mask_flag (changes inner mask radius), background_mask_flag (changes background mask radius)
 	*	output: dominant colors, according to the flags given
 	*/
-	void getDominantColors(Scalar& dom_inner_color, Scalar& dom_flower_color, Scalar& dom_background_color, Mat& img, Point& center,int mask_flag, int background_mask_flag);
+	void getDominantColors(Scalar& dom_inner_color, Scalar& dom_flower_color, Scalar& dom_background_color, Mat& img, int mask_flag, int background_mask_flag);
 
 	/*	getThresholdByFlag
 	*	input: color_flag (changes threshold which seperates background and flower color )
@@ -384,7 +334,6 @@ private:
 	*	may try several background and inner mask radiuses, and several color thresholds, if it gets bad contours (no points, or center point not inside contour)
 	*/
 	void getFlowerContourAndColor(vector<Point>& max_flower_contour, Mat& img, Scalar& dom_inner_color, Scalar& dom_flower_color, Scalar& dom_background_color, Point& center);
-
 
 };
 

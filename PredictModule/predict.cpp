@@ -9,7 +9,6 @@
 */
 int main(int argc, char* argv[]) {
 
-	FlowerFeatureExtractor flower_featurs;
 	SvmModel svm;
 	double res =-1;
 	Point center;
@@ -28,7 +27,8 @@ int main(int argc, char* argv[]) {
 		center.x=atoi(argv[2]);
 		center.y=atoi(argv[3]);
 
-		flower_featurs.extractFeaturesFromImage(argv[1], center);
+		FlowerFeatureExtractor flower_featurs(argv[1], center);
+		flower_featurs.extractFeaturesFromImage();
 		res = svm.predict(flower_featurs.m_sample);
 		printf("** Predicting: %s is %lf **\n\n", argv[1], res);
 

@@ -1,5 +1,8 @@
 #include "svm_funcs_header.h"
+#include <iostream>
+#include <fstream>
 
+using namespace std;
 /*	svmSampleStructToSampleArray
 *	input: a struct representing one sample
 *	output: an array representing the same sample (needed as input for train)
@@ -23,6 +26,31 @@ void DataSample::toMatrix(Mat& sample_mat)
 	sample_mat.at<float>(0,11) = m_min_max_flower_ratio;
 	sample_mat.at<float>(0,12) = m_length_area_ratio;
 	sample_mat.at<float>(0,13) = m_length_inner_length_flower_ratio;
+}
+
+
+void DataSample::toCSV(string filepath)
+{
+	Mat smaple_mat;
+	ofstream fout(filepath);
+
+	if(!fout)
+	{
+		cout<<"File Not Opened"<<endl;  return;
+	}
+
+	toMatrix(smaple_mat);
+
+	for(int i=0; i<smaple_mat.rows; i++)
+	{
+		for(int j=0; j<smaple_mat.cols; j++)
+		{
+			fout<<smaple_mat.at<float>(i,j)<<"\t";
+		}
+		fout<<endl;
+	}
+
+	fout.close();	
 }
 
 /*	svmAddSample
