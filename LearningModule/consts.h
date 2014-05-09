@@ -49,6 +49,13 @@ public:
 	static const int MIN_POINTS_FLAG;
 	static const int DEBUG;
 	static const string SVM_SERIALIZE_PATH;
+	static const string SAMPLES_DIR_PATH;
+	static const string SVM_SERIALIZATION_DIR_PATH;
+	static const string CENTERS_FILE_NAME;
+	static const string SVM_SERIALIZE_FILE_NAME;
+	static const string PREDICT_DIR_PATH;
+	static const string ALL_CENTERS_FILE_NAME;
+
 };
 
 #endif

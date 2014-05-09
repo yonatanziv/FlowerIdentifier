@@ -1,12 +1,13 @@
 #include "utils.h"
 
-DIR* Utils::MyChdir(char * path){
-	if(!PathFileExists(path)){
+DIR* Utils::MyChdir(string path )
+{
+	if(!PathFileExists(path.c_str())){
 		printf("ERROR: directory - %s does not exists\n",path);
 		return NULL;
 	}
-	DIR* dir = opendir(path);
-	if(_chdir(path)!=0){
+	DIR* dir = opendir(path.c_str());
+	if(_chdir(path.c_str())!=0){
 		printf("ERROR: couldnt change working directory - %s\n",path);
 		return NULL;
 	}

@@ -1,12 +1,5 @@
 #include "utils.h"
 
-#define SVM_NUM_SAMPLES 100
-#define SAMPLES_DIR_PATH "flowers"
-#define SVM_SERIALIZATION_DIR_PATH "serialization"
-#define CENTERS_FILE_NAME "centers.txt"
-#define ALL_CENTERS_FILE_NAME "All_Centers.txt"
-
-
 FILE * centersFile;
 FILE* allCentersFile;
 double ratio;
@@ -40,10 +33,10 @@ int main(int argc, char* argv[])
 	DIR *dir,*subdir, *temp;
 	struct dirent *ent;
 
-	allCentersFile = fopen(ALL_CENTERS_FILE_NAME,"w+");
+	allCentersFile = fopen(Consts::ALL_CENTERS_FILE_NAME.c_str(), "w+");
 
 	/* open directory stream */
-	dir = Utils::MyChdir(SAMPLES_DIR_PATH);
+	dir = Utils::MyChdir(Consts::SAMPLES_DIR_PATH);
 
 	if (dir == NULL)
 		return -1;
@@ -122,7 +115,7 @@ int main(int argc, char* argv[])
 			subdir = dir;
 			dir = temp;
 
-			centersFile = fopen(CENTERS_FILE_NAME,"w+");
+			centersFile = fopen(Consts::CENTERS_FILE_NAME.c_str(), "w+");
 			sscanf(ent->d_name, "%d", &flowerID);
 			//printf ("ID = %d\n", flowerID);
 			break;

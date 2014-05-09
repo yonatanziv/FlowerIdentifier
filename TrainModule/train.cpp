@@ -2,12 +2,6 @@
 #include "flower_detection_header.h"
 #include "utils.h"
 
-#define SVM_NUM_SAMPLES 5000
-#define SAMPLES_DIR_PATH "samples"
-#define SVM_SERIALIZATION_DIR_PATH "serialization"
-#define CENTERS_FILE_NAME "centers.txt"
-#define SVM_SERIALIZE_FILE_NAME "svmSerialize.txt"
-
 /*
 *	This program trains our algorithm.
 *	it uses samples directory, which contains images for training, in the following format:
@@ -35,7 +29,7 @@ int main(int argc, char* argv[])
 	struct dirent *ent;
 
 	/* open directory stream */
-	dir = Utils::MyChdir(SAMPLES_DIR_PATH);
+	dir = Utils::MyChdir(Consts::SAMPLES_DIR_PATH);
 
 	if (dir == NULL)
 		return -1;
@@ -81,11 +75,11 @@ int main(int argc, char* argv[])
 			subdir = dir;
 			dir = temp;
 
-			if(!PathFileExists(CENTERS_FILE_NAME)){
+			if(!PathFileExists(Consts::CENTERS_FILE_NAME.c_str())){
 				printf("ERROR: centers file does not exist in directory - %s. Please add it before continue training.\n",ent->d_name);
 				return -1;
 			}
-			centers = fopen(CENTERS_FILE_NAME,"r");
+			centers = fopen(Consts::CENTERS_FILE_NAME.c_str(),"r");
 			if(centers == NULL){
 				printf("ERROR: couldnt open centers file in directory - %s.\n",ent->d_name);
 				return -1;
@@ -109,15 +103,15 @@ int main(int argc, char* argv[])
 	trainSet.toCSV("trainSetCsv.txt");
 	svm.train(trainSet);
 	
-	if(_chdir(SVM_SERIALIZATION_DIR_PATH)!=0){
-		printf("ERROR: directory didn't exist, creating it - %s\n",SVM_SERIALIZATION_DIR_PATH);
-		_mkdir(SVM_SERIALIZATION_DIR_PATH);
-		if(_chdir(SVM_SERIALIZATION_DIR_PATH)!=0){
-			printf("ERROR: couldnt create directory - %s\n",SVM_SERIALIZATION_DIR_PATH);
+	if(_chdir(Consts::SVM_SERIALIZATION_DIR_PATH.c_str())!=0){
+		printf("ERROR: directory didn't exist, creating it - %s\n", Consts::SVM_SERIALIZATION_DIR_PATH);
+		_mkdir(Consts::SVM_SERIALIZATION_DIR_PATH.c_str());
+		if(_chdir(Consts::SVM_SERIALIZATION_DIR_PATH.c_str())!=0){
+			printf("ERROR: couldnt create directory - %s\n",Consts::SVM_SERIALIZATION_DIR_PATH);
 			return -1;
 		}
 	}
-	svm.save(SVM_SERIALIZE_FILE_NAME);
+	svm.save(Consts::SVM_SERIALIZE_FILE_NAME);
 
 	return 0;
 }

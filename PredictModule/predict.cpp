@@ -1,14 +1,12 @@
 #include "flower_detection_header.h"
 
-#define SVM_SERIALIZATION_DIR_PATH "samples\\serialization"
-
 /* command line input: argv[1]=predict_img_path, argv[2]=center.x, argv[3]= center.y
  * This program uses the samples\serialization\svmSerialize.txt file created by the train module, 
  * takes the file given as a parameter and predicts which flower it is.
  * return -1 on error, and the id of the input flower otherwise
 */
 int main(int argc, char* argv[]) {
-
+	
 	SvmModel svm;
 	double res =-1;
 	Point center;

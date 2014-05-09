@@ -1,10 +1,5 @@
 #include "utils.h"
 
-#define SVM_SERIALIZATION_DIR_PATH "samples\\serialization"
-#define PREDICT_DIR_PATH "predict"
-#define CENTERS_FILE_NAME "centers.txt"
-
-
 /* command line input: argv[1]=predict_img_path, argv[2]=center.x, argv[3]= center.y
    return -1 on error, 0 if couldnt recognize the image, and the id of the input flower otherwise*/
 int main(int argc, char* argv[]) {	
@@ -36,10 +31,10 @@ int main(int argc, char* argv[]) {
 		/* print contents of directories listed in command line */
 
 		/* open directory stream */
-		dir = Utils::MyChdir(PREDICT_DIR_PATH);
+		dir = Utils::MyChdir(Consts::PREDICT_DIR_PATH);
 		if (dir != NULL) {
 
-			centers = fopen(CENTERS_FILE_NAME,"r");
+			centers = fopen(Consts::CENTERS_FILE_NAME.c_str(), "r");
 
 			/* print all the files and directories within directory */
 			while ((ent = readdir (dir)) != NULL) {
@@ -55,7 +50,7 @@ int main(int argc, char* argv[]) {
 					if(strcmp(".jpg",ent->d_name + strlen(ent->d_name)-4)!=0){
 						break;
 					}
-					strcpy(temp_filename,PREDICT_DIR_PATH);
+					strcpy(temp_filename, Consts::PREDICT_DIR_PATH.c_str());
 					strcat(temp_filename,"\\");
 					strcat(temp_filename,ent->d_name);
 					Utils::getCenter(center,centers,flowerPicNo);

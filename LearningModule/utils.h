@@ -8,7 +8,7 @@
 class Utils
 {
 public:
-	static DIR* MyChdir(char * path);
+	static DIR* MyChdir(string path);
 
 	static void toLowercase(char* str);
 
