@@ -1,4 +1,4 @@
-#include "flower_detection_header.h"
+#include "flower_detection.h"
 
 /* command line input: argv[1]=predict_img_path, argv[2]=center.x, argv[3]= center.y
  * This program uses the samples\serialization\svmSerialize.txt file created by the train module, 
@@ -26,9 +26,8 @@ int main(int argc, char* argv[]) {
 		center.y=atoi(argv[3]);
 
 		FlowerFeatureExtractor flower_featurs(argv[1], center);
-		flower_featurs.extractFeaturesFromImage();
+		flower_featurs.extractFeatures();
 		res = svm.predict(flower_featurs.m_sample);
-		flower_featurs.m_sample.toCSV("csv4.txt");
 		printf("** Predicting: %s is %lf **\n\n", argv[1], res);
 
 	}  catch(exception& e) {

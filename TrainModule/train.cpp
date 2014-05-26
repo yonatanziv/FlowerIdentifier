@@ -1,12 +1,10 @@
-﻿//version 54
-#include "flower_detection_header.h"
-#include "utils.h"
+﻿#include "flower_detection.h"
 
 /*
 *	This program trains our algorithm.
-*	it uses samples directory, which contains images for training, in the following format:
+*	It uses samples directory, which contains images for training, in the following format:
 *	<TRAIN_EXE_PATH>/samples/<FLOWER_ID>/<FLOWER_PIC_NUM>.jpg
-*	and each flower, its folder must contain a centers.txt file in the following format:
+*	Each folder must contain a centers.txt file in the following format:
 *	for each flower photo;
 *	<FLOWER_PIC_NUM>,<CENTER_POINT_X>,<CENTER_POINT_Y>
 *	program output is stored under serialization/svmSerialize.txt file.
@@ -19,7 +17,7 @@ int main(int argc, char* argv[])
 	FILE* centers=NULL;
 	Point center;
 	int center_res;
-	printf("\n\n Samples:\n");
+	cout << "\n\n Samples:\n";
 	
 	//loop over files
 	/******** DIR SCANNING CODE *************/
@@ -35,7 +33,7 @@ int main(int argc, char* argv[])
 		return -1;
 	
 	ent = readdir(dir);
-	/* print all the files and directories within directory */
+	/* loop all over the files and directories within directory */
 	while (ent != NULL) {
 		switch (ent->d_type) {
 
@@ -52,7 +50,7 @@ int main(int argc, char* argv[])
 				try 
 				{
 					FlowerFeatureExtractor flower_featurs(ent->d_name, center);
-					flower_featurs.extractFeaturesFromImage();
+					flower_featurs.extractFeatures();
 					flower_featurs.m_sample.m_label = flowerID;//CHANGE TO FLOWER LABEL
 					trainSet.addSample(flower_featurs.m_sample);
 
@@ -100,7 +98,7 @@ int main(int argc, char* argv[])
 	closedir (dir);
 
 	/******** END DIR SCANNING CODE *************/
-	trainSet.toCSV("trainSetCsv.txt");
+	//trainSet.toCSV("trainSetCsv.txt");
 	svm.train(trainSet);
 	
 	if(_chdir(Consts::SVM_SERIALIZATION_DIR_PATH.c_str())!=0){

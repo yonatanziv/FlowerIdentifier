@@ -83,16 +83,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="consts.cpp" />
-    <ClCompile Include="flower_detection_funcs.cpp" />
-    <ClCompile Include="svm_funcs_code.cpp" />
+    <ClCompile Include="flower_detection.cpp" />
+    <ClCompile Include="svm_funcs.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="consts.h" />
     <ClInclude Include="dirent.h" />
     <ClInclude Include="exceptions.h" />
-    <ClInclude Include="flower_detection_header.h" />
-    <ClInclude Include="svm_funcs_header.h" />
+    <ClInclude Include="flower_detection.h" />
+    <ClInclude Include="svm_funcs.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

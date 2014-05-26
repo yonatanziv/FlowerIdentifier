@@ -1,7 +1,10 @@
 #include "utils.h"
 
-/* command line input: argv[1]=predict_img_path, argv[2]=center.x, argv[3]= center.y
-   return -1 on error, 0 if couldnt recognize the image, and the id of the input flower otherwise*/
+/*
+ * This is a massive predict module - for test the goodness of our training set.
+ * This program loop all over the flowers in the PREDICT_DIR_PATH folder, and returns
+ * for each flower his ID.
+*/
 int main(int argc, char* argv[]) {	
 	SvmModel svm;
 	double res =-1;
@@ -28,8 +31,6 @@ int main(int argc, char* argv[]) {
 		DIR *dir,*subdir, *temp;
 		struct dirent *ent;	
 
-		/* print contents of directories listed in command line */
-
 		/* open directory stream */
 		dir = Utils::MyChdir(Consts::PREDICT_DIR_PATH);
 		if (dir != NULL) {
@@ -40,10 +41,6 @@ int main(int argc, char* argv[]) {
 			while ((ent = readdir (dir)) != NULL) {
 				switch (ent->d_type) {
 				case DT_REG:
-
-
-					/******************** YOUR CODE HERE *************************/
-
 					sscanf(ent->d_name, "%d.jpg", &flowerPicNo);
 					//printf ("ID:%d, No:%d:\n",flowerID, flowerPicNo);
 					Utils::toLowercase(ent->d_name + strlen(ent->d_name)-4);
@@ -58,7 +55,7 @@ int main(int argc, char* argv[]) {
 					{
 						try {
 							FlowerFeatureExtractor flower_featurs(ent->d_name, center);
-							flower_featurs.extractFeaturesFromImage();
+							flower_featurs.extractFeatures();
 							res = svm.predict(flower_featurs.m_sample);
 							printf("** Predicting: %s is %lf **\n\n", ent->d_name, res);	
 						}   catch(exception& e) {

@@ -25,6 +25,11 @@ void my_mouse_callback( int event, int x, int y, int flags, void* param ){
 
 }
 
+
+/*
+ * This is an help program for determine quickly the centers point of the flowers.
+ * It loop all over the SAMPLES_DIR_PATH, and for each flower the user picks the flower's center. 
+ */
 int main(int argc, char* argv[]) 
 {		
 	//loop over files
@@ -90,7 +95,6 @@ int main(int argc, char* argv[])
 
 			image = imread(newName);
 			Utils::resizeImage(image, img_resized);
-
 
 			ratio = image.rows*1.0/img_resized.rows;
 			
