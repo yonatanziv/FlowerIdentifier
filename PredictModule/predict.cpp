@@ -5,6 +5,7 @@
  * takes the file given as a parameter and predicts which flower it is.
  * return -1 on error, and the id of the input flower otherwise
 */
+
 int main(int argc, char* argv[]) {
 	
 	SvmModel svm;
@@ -37,4 +38,3 @@ int main(int argc, char* argv[]) {
 	waitKey(0);
 	return (int)res;
 } 
-

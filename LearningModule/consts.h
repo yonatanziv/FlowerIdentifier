@@ -47,6 +47,7 @@ public:
 	static const int INNER_CONTUOR_MINIMUM_THRESHOLD;					//Minimum threshold to find inner contour. (Minimum color distance threshold used at the binarization process)
 	static const int MAX_POINTS_FLAG;									//This flag is passed to localMinMaxPointsInner function if we want to find local max points.
 	static const int MIN_POINTS_FLAG;									//This flag is passed to localMinMaxPointsInner function if we want to find local min points.
+	static const int GRUBCUT_ITERATIONS;								//Number of iterations of grabcut algorithm.
 	static const int DEBUG;												//Debug mode indicator.
 	static const string SVM_SERIALIZE_PATH;
 	static const string SAMPLES_DIR_PATH;
@@ -55,6 +56,7 @@ public:
 	static const string SVM_SERIALIZE_FILE_NAME;
 	static const string PREDICT_DIR_PATH;
 	static const string ALL_CENTERS_FILE_NAME;
+	
 };
 
 #endif

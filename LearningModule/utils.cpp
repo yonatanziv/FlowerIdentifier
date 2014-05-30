@@ -355,3 +355,21 @@ double Utils::contourToPointDst(vector<Point>& contour, Point& center)
 	}
 	return minDst;
 }
+
+void Utils::intersectMasks(Mat& maskA, Mat& maskB, Mat& intersectMask)
+{
+	int x,y;
+	for(x=0; x < maskA.cols; x++)
+	{
+		for(y=0; y < maskA.rows; y++)
+		{
+
+
+			if(maskA.at<uchar>(y,x) != 0 && maskB.at<uchar>(y,x) != 0) {
+				intersectMask.at<uchar>(y,x) = 255; //White to greater of threshold
+			} else{
+				intersectMask.at<uchar>(y,x) = 0; //Black other
+			}
+		}
+	}
+}

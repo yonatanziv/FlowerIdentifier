@@ -150,7 +150,11 @@ public:
 	*/
 	static double contourToPointDst(vector<Point>& contour, Point& center);
 
-
+	/*	intersectMasks
+	*	input: Two masks.
+	*	output: Intersect mask.
+	*/
+	static void intersectMasks(Mat& maskA, Mat& maskB, Mat& outMask);
 };
 
 
